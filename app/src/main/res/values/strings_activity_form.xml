@@ -1,0 +1,12 @@
+<resources>
+
+    <string name="title_activity_form">Form</string>
+
+    <string name="action_send">Send!</string>
+    <string name="prompt_species">Species</string>
+    <string name="prompt_species_long">Guess species</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_notes">Notes</string>
+    <string name="prompt_notes_long">Notes</string>
+
+</resources>
