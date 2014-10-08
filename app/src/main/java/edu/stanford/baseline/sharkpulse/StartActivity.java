@@ -15,19 +15,22 @@ import android.widget.ImageView;
 
 public class StartActivity extends Activity {
 
-    public static final int ACTION_GALERY_SELECTED = 0;
+    public static final int ACTION_GALLERY_SELECTED = 0;
     public static final int ACTION_CAMERA_SELECTED = 1;
 
     public static final String KEY_IMAGE_PATH = "KEY_IMAGE_PATH";
 
-    private ImageView mImageView;
+    //moved to FormActivity//
+    //private ImageView mImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
 
-        mImageView = (ImageView) findViewById(R.id.imageView);
+        //moved to FormActivity//
+        //mImageView = (ImageView) findViewById(R.id.imageView);
+
     }
 
     @Override
@@ -55,15 +58,15 @@ public class StartActivity extends Activity {
         // launch the intent
         Intent i = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(i, ACTION_GALERY_SELECTED);
+        startActivityForResult(i, ACTION_GALLERY_SELECTED);
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         String picturePath = null;
-        if (requestCode == ACTION_GALERY_SELECTED) {
+        if (requestCode == ACTION_GALLERY_SELECTED) {
             switch (resultCode) {
                 case Activity.RESULT_OK:
-                    picturePath = getSelectedImageFromGalery(data, this);
+                    picturePath = getSelectedImageFromGallery(data, this);
                     break;
                 case Activity.RESULT_CANCELED:
                     // re-launching the activity!?
@@ -92,7 +95,7 @@ public class StartActivity extends Activity {
 
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.buttonGalery:
+            case R.id.buttonGallery:
                 onOpenGallery();
                 break;
             case R.id.buttonTakePicture:
@@ -113,7 +116,7 @@ public class StartActivity extends Activity {
 
     }
 
-    public String getSelectedImageFromGalery(Intent data, Context context) {
+    public String getSelectedImageFromGallery(Intent data, Context context) {
         final Uri selectedImage = data.getData();
         final String[] filePathColumn = { MediaStore.Images.Media.DATA };
         final Cursor cursor = context.getContentResolver()

@@ -1,24 +1,44 @@
 package edu.stanford.baseline.sharkpulse;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
+
+import java.io.File;
 
 
 public class FormActivity extends Activity {
 
     private Record mRecord;
-
+    private ImageView mImageView;
+    private Context mContext;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_form);
 
+        mContext = getApplicationContext();
+        mImageView = (ImageView) findViewById(R.id.imageView);
         mRecord = new Record();
+
+        File imgFile = new File(getIntent().getExtras().getString(StartActivity.KEY_IMAGE_PATH));
+
         mRecord.setImage(getIntent().getExtras().getString(StartActivity.KEY_IMAGE_PATH));
+
+        if(imgFile.exists()){
+            Bitmap imgBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+            Bitmap resizedBitmap = Bitmap.createScaledBitmap(imgBitmap,(int)(imgBitmap.getWidth()*0.8), (int)(imgBitmap.getHeight()*0.8), true);
+            mImageView.setImageBitmap(resizedBitmap);
+        }
+
     }
 
 
@@ -48,6 +68,9 @@ public class FormActivity extends Activity {
                     .getText().toString();
             mRecord.mEmail = ((EditText) findViewById(R.id.email_field)).getText().toString();
             mRecord.mNotes = ((EditText) findViewById(R.id.notes_field)).getText().toString();
+
+            AppController controller = AppController.getInstance(mContext);
+            controller.startGPS();
         }
     }
 }

@@ -47,7 +47,7 @@ public class Record {
     public Record setImage(String imagePath) {
         mImagePath = imagePath;
 
-        // todo get the info from the picture if it's from galery. Here or server side?
+        // todo get the info from the picture if it's from gallery. Here or server side?
 
         return this;
     }
