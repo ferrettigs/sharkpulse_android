@@ -19,7 +19,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Take a picture"
+        android:text="@string/camera"
         android:id="@+id/buttonTakePicture"
         android:layout_marginBottom="100dp"
         android:layout_marginLeft="61dp"
@@ -29,7 +29,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Galery"
+        android:text="@string/gallery"
         android:id="@+id/buttonGalery"
         android:layout_alignTop="@+id/buttonTakePicture"
         android:layout_alignParentRight="true"

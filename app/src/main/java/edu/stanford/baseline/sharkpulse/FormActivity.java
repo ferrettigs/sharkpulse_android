@@ -1,24 +1,40 @@
 package edu.stanford.baseline.sharkpulse;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 
 public class FormActivity extends Activity {
 
     private Record mRecord;
+    protected Context mContext;
+    private static final String LOG_TAG = FormActivity.class.getSimpleName();
+    private static final String BASELINE_EMAIL_ADDRESS = "sharkbaselines@gmail.com";
+    private String mImagePath;
+    private String mEmail;
+    private String mNotes;
+    private String mGuessSpecies;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_form);
 
+        mContext = getApplicationContext();
+
+        //create new record and set image path
         mRecord = new Record();
-        mRecord.setImage(getIntent().getExtras().getString(StartActivity.KEY_IMAGE_PATH));
+        mImagePath = getIntent().getExtras().getString(StartActivity.KEY_IMAGE_PATH);
     }
 
 
@@ -42,12 +58,30 @@ public class FormActivity extends Activity {
     }
 
     public void onClick(View view) {
-        if(view.getId() == R.id.button_send) {
+
+        Log.v(LOG_TAG, "onClick");
+        Toast.makeText(this, "You clicked the button", Toast.LENGTH_LONG).show();
+
+        if (view.getId() == R.id.button_send) {
             // pack all the info
-            mRecord.mGuessSpecies = ((EditText) findViewById(R.id.species_field))
+            mGuessSpecies = ((EditText) findViewById(R.id.species_field))
                     .getText().toString();
-            mRecord.mEmail = ((EditText) findViewById(R.id.email_field)).getText().toString();
-            mRecord.mNotes = ((EditText) findViewById(R.id.notes_field)).getText().toString();
+            mEmail = ((EditText) findViewById(R.id.email_field)).getText().toString();
+            mNotes = ((EditText) findViewById(R.id.notes_field)).getText().toString();
+
+            Log.v(LOG_TAG, mRecord.mGuessSpecies);
+            Log.v(LOG_TAG, mRecord.mEmail);
+            Log.v(LOG_TAG, mRecord.mNotes);
+
+
+            AppController controller = AppController.getInstance(mContext);
+            controller.startGPS();
+            controller.setData(mGuessSpecies, mEmail, mNotes, mImagePath);
+            controller.sendData();
+            controller.stopGPS();
+
+
+
         }
     }
 }
