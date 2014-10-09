@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -12,6 +13,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.util.Log;
+import android.widget.Toast;
 
 public class StartActivity extends Activity {
 
@@ -22,6 +25,7 @@ public class StartActivity extends Activity {
 
     //moved to FormActivity//
     //private ImageView mImageView;
+    public static final String LOG_TAG = StartActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +34,6 @@ public class StartActivity extends Activity {
 
         //moved to FormActivity//
         //mImageView = (ImageView) findViewById(R.id.imageView);
-
     }
 
     @Override
@@ -66,10 +69,12 @@ public class StartActivity extends Activity {
         if (requestCode == ACTION_GALLERY_SELECTED) {
             switch (resultCode) {
                 case Activity.RESULT_OK:
+                    //if gallery went ok, get path from image
                     picturePath = getSelectedImageFromGallery(data, this);
+                    Log.v(LOG_TAG, "Image Path: " + picturePath);
                     break;
                 case Activity.RESULT_CANCELED:
-                    // re-launching the activity!?
+                    // re-launching the activity!? (what is this)
                     break;
                 default:
                     break;
@@ -78,6 +83,7 @@ public class StartActivity extends Activity {
             switch (resultCode) {
                 case Activity.RESULT_OK:
                     picturePath = getImageFromCamera();
+                    Log.v(LOG_TAG, "Image path: " + picturePath);
                     break;
                 case Activity.RESULT_CANCELED:
                     // re-launching the activity!?
@@ -94,6 +100,7 @@ public class StartActivity extends Activity {
     }
 
     public void onClick(View view) {
+        Toast.makeText(this, "You clicked the button", Toast.LENGTH_SHORT).show();
         switch (view.getId()) {
             case R.id.buttonGallery:
                 onOpenGallery();
@@ -116,6 +123,7 @@ public class StartActivity extends Activity {
 
     }
 
+    //get path
     public String getSelectedImageFromGallery(Intent data, Context context) {
         final Uri selectedImage = data.getData();
         final String[] filePathColumn = { MediaStore.Images.Media.DATA };
@@ -128,11 +136,14 @@ public class StartActivity extends Activity {
         return picturePath;
     }
 
+    //fixed spelling errors
+
+    //get image info
     private String getImageFromCamera() {
-        final String[] projetion = new String[]{MediaStore.Images.Media.DATA,
+        final String[] projection = new String[]{MediaStore.Images.Media.DATA,
                 MediaStore.Images.Media.DATE_ADDED, MediaStore.Images.ImageColumns.ORIENTATION};
         Cursor cursor = getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                projetion, MediaStore.Images.Media.DATE_ADDED, null, "date_added ASC");
+                projection, MediaStore.Images.Media.DATE_ADDED, null, "date_added ASC");
         if (cursor != null && cursor.moveToFirst()) {
             return cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
         }

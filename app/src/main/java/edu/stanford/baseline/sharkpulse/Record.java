@@ -7,6 +7,8 @@ import java.util.Date;
 /**
  * Created by emazzilli on 9/13/14.
  */
+
+//Record object to store record of picture
 public class Record {
     protected String mEmail;
     protected String mGuessSpecies;

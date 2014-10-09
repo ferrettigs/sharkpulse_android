@@ -1,11 +1,17 @@
 package edu.stanford.baseline.sharkpulse;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,13 +19,22 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import java.io.File;
+import android.widget.Toast;
 
 
 public class FormActivity extends Activity {
 
     private Record mRecord;
     private ImageView mImageView;
-    private Context mContext;
+    protected Context mContext;
+    private static final String LOG_TAG = FormActivity.class.getSimpleName();
+    private static final String BASELINE_EMAIL_ADDRESS = "sharkbaselines@gmail.com";
+    private String mImagePath;
+    private String mEmail;
+    private String mNotes;
+    private String mGuessSpecies;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,8 +54,33 @@ public class FormActivity extends Activity {
             mImageView.setImageBitmap(resizedBitmap);
         }
 
+
+
+
+        //create new record and set image path
+        mRecord = new Record();
+        mImagePath = getIntent().getExtras().getString(StartActivity.KEY_IMAGE_PATH);
+
     }
 
+    public void showAlertDialog(String message, String positiveButton, String negativeButton)
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(message)
+                .setCancelable(false)
+                .setPositiveButton(positiveButton, new DialogInterface.OnClickListener() {
+                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    }
+                })
+                .setNegativeButton(negativeButton, new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        dialog.cancel();
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -62,15 +102,29 @@ public class FormActivity extends Activity {
     }
 
     public void onClick(View view) {
-        if(view.getId() == R.id.button_send) {
+
+        Log.v(LOG_TAG, "onClick");
+        Toast.makeText(this, "You clicked the button", Toast.LENGTH_LONG).show();
+
+        if (view.getId() == R.id.button_send) {
             // pack all the info
-            mRecord.mGuessSpecies = ((EditText) findViewById(R.id.species_field))
+            mGuessSpecies = ((EditText) findViewById(R.id.species_field))
                     .getText().toString();
-            mRecord.mEmail = ((EditText) findViewById(R.id.email_field)).getText().toString();
-            mRecord.mNotes = ((EditText) findViewById(R.id.notes_field)).getText().toString();
+
+
+            mEmail = ((EditText) findViewById(R.id.email_field)).getText().toString();
+            mNotes = ((EditText) findViewById(R.id.notes_field)).getText().toString();
+
+            Log.v(LOG_TAG, mImagePath);
+            Log.v(LOG_TAG, mGuessSpecies);
+            Log.v(LOG_TAG, mEmail);
+            Log.v(LOG_TAG, mNotes);
+
 
             AppController controller = AppController.getInstance(mContext);
-            controller.startGPS();
+            if(!controller.startGPS())
+                showAlertDialog("GPS is not enabled. Do you want to go to settings menu?", "Settings","Cancel");
+            controller.setData(mGuessSpecies, mEmail, mNotes, mImagePath);
         }
     }
 }
