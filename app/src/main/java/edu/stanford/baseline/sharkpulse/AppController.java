@@ -8,6 +8,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.content.Intent;
+import android.util.Log;
 
 /**
  * Created by Emanuel Mazzilli on 9/16/14.
@@ -26,6 +27,7 @@ public class AppController {
     private static final String TESTSHARK_URL = "http://testshark.herokuapp.com/recoreds/create";
     private static final String BASELINE_URL = "http://baseline2.stanford.edu/uploadImage.php";
     private static final String BASELINE_EMAIL_ADDRESS = "sharkbaselines@gmail.com";
+    private static final String LOG_TAG = AppController.class.getSimpleName();
 
     private static AppController sInstance;
 
@@ -55,37 +57,46 @@ public class AppController {
         mRecord.mGuessSpecies = species;
         mRecord.mEmail = email;
         mRecord.mNotes = notes;
-        mRecord.mImagePath = imagePath;
+        mRecord.mImagePath = "file://" + imagePath;
+        mRecord.setCurrentDate();
     }
 
     void startGPS() {
         // Define a listener that responds to location updates
+
         mLocationListener = new LocationListener() {
 
             public void onLocationChanged(Location location) {
                 // set the record
+
+                Log.v(LOG_TAG, "onLocationChanged");
                 mRecord.setCoordinates(location.getLatitude(), location.getLongitude());
+
+                //once we have everything for the record, send data
+                sendData();
                 // unregister the listener
                 stopGPS();
-
-
             }
+
             @Override
             public void onStatusChanged(String provider, int status, Bundle extras) {
                 // todo check gps unavailable
-
-
+                Log.v(LOG_TAG, "onStatusChanged");
             }
 
             @Override
-            public void onProviderEnabled(String provider) { }
+            public void onProviderEnabled(String provider) {
+                Log.v(LOG_TAG, "onProviderEnabled");
+            }
 
             @Override
-            public void onProviderDisabled(String provider) { }
+            public void onProviderDisabled(String provider) {
+                Log.v(LOG_TAG, "onProviderDisabled");
+            }
         };
 
         // Register the listener with the Location Manager to receive location updates
-        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0,
+        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,0,0,
                 mLocationListener);
     }
 
@@ -108,14 +119,20 @@ public class AppController {
 
     protected void sendEmail() {
         //todo send post through email
+
         Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
                 "mailto",BASELINE_EMAIL_ADDRESS, null));
 
         emailIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, "I saw a shark!!");
-        emailIntent.putExtra(Intent.EXTRA_TEXT, "LOL");
+        emailIntent.putExtra(Intent.EXTRA_TEXT, "Date: " + mRecord.mDate
+                                   + "\nLocation: " + mRecord.mLongitude + " , "
+                                   + mRecord.mLatitude + "\nGuess Species: "
+                                   + mRecord.mGuessSpecies + "\nNotes: "
+                                   + mRecord.mNotes) ;
 
+        emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(mRecord.mImagePath));
         mContext.startActivity(emailIntent);
 
 

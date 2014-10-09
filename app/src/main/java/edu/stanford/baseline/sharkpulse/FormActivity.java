@@ -59,29 +59,18 @@ public class FormActivity extends Activity {
 
     public void onClick(View view) {
 
-        Log.v(LOG_TAG, "onClick");
-        Toast.makeText(this, "You clicked the button", Toast.LENGTH_LONG).show();
-
         if (view.getId() == R.id.button_send) {
             // pack all the info
+
             mGuessSpecies = ((EditText) findViewById(R.id.species_field))
                     .getText().toString();
             mEmail = ((EditText) findViewById(R.id.email_field)).getText().toString();
             mNotes = ((EditText) findViewById(R.id.notes_field)).getText().toString();
 
-            Log.v(LOG_TAG, mRecord.mGuessSpecies);
-            Log.v(LOG_TAG, mRecord.mEmail);
-            Log.v(LOG_TAG, mRecord.mNotes);
-
-
             AppController controller = AppController.getInstance(mContext);
             controller.startGPS();
             controller.setData(mGuessSpecies, mEmail, mNotes, mImagePath);
-            controller.sendData();
-            controller.stopGPS();
-
-
-
+            Toast.makeText(mContext, "Getting GPS coordinates...", Toast.LENGTH_SHORT).show();
         }
     }
 }
