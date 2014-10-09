@@ -11,7 +11,6 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.content.Intent;
-import android.provider.Settings;
 import android.util.Log;
 
 /**
@@ -32,8 +31,6 @@ public class AppController {
     private static final String BASELINE_URL = "http://baseline2.stanford.edu/uploadImage.php";
     private static final String BASELINE_EMAIL_ADDRESS = "sharkbaselines@gmail.com";
 
-    private static final String LOG_TAG = AppController.class.getSimpleName();
-
     private static AppController sInstance;
 
     protected LocationManager mLocationManager;
@@ -41,14 +38,15 @@ public class AppController {
 
     private Record mRecord;
     private Context mContext;
-    private boolean alertDialog = true;
+    protected boolean alertDialog;
 
     private AppController(Context context) {
         mContext = context;
         mRecord = new Record();
-
         // Acquire a reference to the system Location Manager
         mLocationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
+        alertDialog = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
     }
 
     public static AppController getInstance(Context context) {
@@ -63,10 +61,11 @@ public class AppController {
         mRecord.mGuessSpecies = species;
         mRecord.mEmail = email;
         mRecord.mNotes = notes;
-        mRecord.mImagePath = imagePath;
+        mRecord.mImagePath = "file://" + imagePath;
+        mRecord.setCurrentDate();
     }
 
-    boolean startGPS() {
+    void startGPS() {
 
 
         // Define a listener that responds to location updates
@@ -75,66 +74,42 @@ public class AppController {
 
             public void onLocationChanged(Location location) {
                 // set the record
-                Log.v(LOG_TAG, "onLocationChanged");
                 mRecord.setCoordinates(location.getLatitude(), location.getLongitude());
+                //once we have everything for the record, send data
                 sendData();
-                Log.v(LOG_TAG, String.valueOf(mRecord.mLatitude));
                 // unregister the listener
                 stopGPS();
-
-
             }
+
             @Override
             public void onStatusChanged(String provider, int status, Bundle extras) {
                 // todo check gps unavailable
-                Log.v(LOG_TAG, "onStatusChanged");
-
-
             }
 
             @Override
             public void onProviderEnabled(String provider) {
-                Log.v(LOG_TAG, "onProviderEnabled");
+                alertDialog = true;
+
             }
 
             @Override
             public void onProviderDisabled(String provider) {
-                alertDialog = false;
-                Log.v(LOG_TAG, "onProviderDisabled");
-                Log.v(LOG_TAG, Boolean.toString(alertDialog));
             }
         };
 
         // Register the listener with the Location Manager to receive location updates
-
         mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,0,0,
                 mLocationListener);
 
-        return alertDialog;
     }
-////////////left here///////
-    public void showAlertDialog(String message, Context context)
-    {
-        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-        builder.setMessage(message)
-                .setCancelable(false)
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
-        Dialog dialog =builder.create();
-        dialog.show();
-    }
-//////////////////////////////////////
     protected void stopGPS() {
         mLocationManager.removeUpdates(mLocationListener);
     }
 
 
     protected void sendData() {
+        alertDialog = true;
         switch (SEND_MODE) {
             case MODE_EMAIL: sendEmail();
                 break;
@@ -154,10 +129,14 @@ public class AppController {
 
         emailIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        emailIntent.putExtra(Intent.EXTRA_SUBJECT, Double.toString(mRecord.mLatitude));
-        emailIntent.putExtra(Intent.EXTRA_TEXT, Double.toString(mRecord.mLongitude));
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "I saw a shark!!");
+        emailIntent.putExtra(Intent.EXTRA_TEXT, "Date: " + mRecord.mDate
+                                   + "\nLocation: " + mRecord.mLongitude + " , "
+                                   + mRecord.mLatitude + "\nGuess Species: "
+                                   + mRecord.mGuessSpecies + "\nNotes: "
+                                   + mRecord.mNotes) ;
 
-
+        emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(mRecord.mImagePath));
         mContext.startActivity(emailIntent);
 
 

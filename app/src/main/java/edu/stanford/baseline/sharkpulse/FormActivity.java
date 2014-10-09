@@ -27,7 +27,6 @@ public class FormActivity extends Activity {
     private Record mRecord;
     private ImageView mImageView;
     protected Context mContext;
-    private static final String LOG_TAG = FormActivity.class.getSimpleName();
     private static final String BASELINE_EMAIL_ADDRESS = "sharkbaselines@gmail.com";
     private String mImagePath;
     private String mEmail;
@@ -65,7 +64,7 @@ public class FormActivity extends Activity {
 
     public void showAlertDialog(String message, String positiveButton, String negativeButton)
     {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this,2);
         builder.setMessage(message)
                 .setCancelable(false)
                 .setPositiveButton(positiveButton, new DialogInterface.OnClickListener() {
@@ -103,28 +102,22 @@ public class FormActivity extends Activity {
 
     public void onClick(View view) {
 
-        Log.v(LOG_TAG, "onClick");
-        Toast.makeText(this, "You clicked the button", Toast.LENGTH_LONG).show();
-
         if (view.getId() == R.id.button_send) {
             // pack all the info
             mGuessSpecies = ((EditText) findViewById(R.id.species_field))
                     .getText().toString();
 
-
             mEmail = ((EditText) findViewById(R.id.email_field)).getText().toString();
             mNotes = ((EditText) findViewById(R.id.notes_field)).getText().toString();
 
-            Log.v(LOG_TAG, mImagePath);
-            Log.v(LOG_TAG, mGuessSpecies);
-            Log.v(LOG_TAG, mEmail);
-            Log.v(LOG_TAG, mNotes);
-
 
             AppController controller = AppController.getInstance(mContext);
-            if(!controller.startGPS())
+            if(!controller.alertDialog)
                 showAlertDialog("GPS is not enabled. Do you want to go to settings menu?", "Settings","Cancel");
+            controller.startGPS();
             controller.setData(mGuessSpecies, mEmail, mNotes, mImagePath);
+
+            Toast.makeText(mContext, "Getting GPS coordinates...", Toast.LENGTH_SHORT).show();
         }
     }
 }

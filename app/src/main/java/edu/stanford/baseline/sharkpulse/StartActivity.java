@@ -25,7 +25,6 @@ public class StartActivity extends Activity {
 
     //moved to FormActivity//
     //private ImageView mImageView;
-    public static final String LOG_TAG = StartActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +70,6 @@ public class StartActivity extends Activity {
                 case Activity.RESULT_OK:
                     //if gallery went ok, get path from image
                     picturePath = getSelectedImageFromGallery(data, this);
-                    Log.v(LOG_TAG, "Image Path: " + picturePath);
                     break;
                 case Activity.RESULT_CANCELED:
                     // re-launching the activity!? (what is this)
@@ -83,7 +81,6 @@ public class StartActivity extends Activity {
             switch (resultCode) {
                 case Activity.RESULT_OK:
                     picturePath = getImageFromCamera();
-                    Log.v(LOG_TAG, "Image path: " + picturePath);
                     break;
                 case Activity.RESULT_CANCELED:
                     // re-launching the activity!?
@@ -126,7 +123,7 @@ public class StartActivity extends Activity {
     //get path
     public String getSelectedImageFromGallery(Intent data, Context context) {
         final Uri selectedImage = data.getData();
-        final String[] filePathColumn = { MediaStore.Images.Media.DATA };
+        final String[] filePathColumn = { MediaStore.Images.Media.DATA,MediaStore.Images.ImageColumns.ORIENTATION };
         final Cursor cursor = context.getContentResolver()
                 .query(selectedImage, filePathColumn, null, null, null);
         cursor.moveToFirst();
@@ -144,7 +141,7 @@ public class StartActivity extends Activity {
                 MediaStore.Images.Media.DATE_ADDED, MediaStore.Images.ImageColumns.ORIENTATION};
         Cursor cursor = getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                 projection, MediaStore.Images.Media.DATE_ADDED, null, "date_added ASC");
-        if (cursor != null && cursor.moveToFirst()) {
+        if (cursor != null && cursor.moveToLast()) {
             return cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
         }
         return null;
