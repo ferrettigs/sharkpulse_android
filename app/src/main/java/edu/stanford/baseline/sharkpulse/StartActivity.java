@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -12,22 +13,26 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.util.Log;
+import android.widget.Toast;
 
 public class StartActivity extends Activity {
 
-    public static final int ACTION_GALERY_SELECTED = 0;
+    public static final int ACTION_GALLERY_SELECTED = 0;
     public static final int ACTION_CAMERA_SELECTED = 1;
 
     public static final String KEY_IMAGE_PATH = "KEY_IMAGE_PATH";
 
-    private ImageView mImageView;
+    //moved to FormActivity//
+    //private ImageView mImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
 
-        mImageView = (ImageView) findViewById(R.id.imageView);
+        //moved to FormActivity//
+        //mImageView = (ImageView) findViewById(R.id.imageView);
     }
 
     @Override
@@ -55,18 +60,19 @@ public class StartActivity extends Activity {
         // launch the intent
         Intent i = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(i, ACTION_GALERY_SELECTED);
+        startActivityForResult(i, ACTION_GALLERY_SELECTED);
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         String picturePath = null;
-        if (requestCode == ACTION_GALERY_SELECTED) {
+        if (requestCode == ACTION_GALLERY_SELECTED) {
             switch (resultCode) {
                 case Activity.RESULT_OK:
-                    picturePath = getSelectedImageFromGalery(data, this);
+                    //if gallery went ok, get path from image
+                    picturePath = getSelectedImageFromGallery(data, this);
                     break;
                 case Activity.RESULT_CANCELED:
-                    // re-launching the activity!?
+                    // re-launching the activity!? (what is this)
                     break;
                 default:
                     break;
@@ -91,8 +97,9 @@ public class StartActivity extends Activity {
     }
 
     public void onClick(View view) {
+        Toast.makeText(this, "You clicked the button", Toast.LENGTH_SHORT).show();
         switch (view.getId()) {
-            case R.id.buttonGalery:
+            case R.id.buttonGallery:
                 onOpenGallery();
                 break;
             case R.id.buttonTakePicture:
@@ -113,9 +120,10 @@ public class StartActivity extends Activity {
 
     }
 
-    public String getSelectedImageFromGalery(Intent data, Context context) {
+    //get path
+    public String getSelectedImageFromGallery(Intent data, Context context) {
         final Uri selectedImage = data.getData();
-        final String[] filePathColumn = { MediaStore.Images.Media.DATA };
+        final String[] filePathColumn = { MediaStore.Images.Media.DATA,MediaStore.Images.ImageColumns.ORIENTATION };
         final Cursor cursor = context.getContentResolver()
                 .query(selectedImage, filePathColumn, null, null, null);
         cursor.moveToFirst();
@@ -125,12 +133,15 @@ public class StartActivity extends Activity {
         return picturePath;
     }
 
+    //fixed spelling errors
+
+    //get image info
     private String getImageFromCamera() {
-        final String[] projetion = new String[]{MediaStore.Images.Media.DATA,
+        final String[] projection = new String[]{MediaStore.Images.Media.DATA,
                 MediaStore.Images.Media.DATE_ADDED, MediaStore.Images.ImageColumns.ORIENTATION};
         Cursor cursor = getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                projetion, MediaStore.Images.Media.DATE_ADDED, null, "date_added ASC");
-        if (cursor != null && cursor.moveToFirst()) {
+                projection, MediaStore.Images.Media.DATE_ADDED, null, "date_added ASC");
+        if (cursor != null && cursor.moveToLast()) {
             return cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
         }
         return null;
