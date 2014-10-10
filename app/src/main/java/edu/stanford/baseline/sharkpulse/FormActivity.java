@@ -18,16 +18,15 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+
 import java.io.File;
 import android.widget.Toast;
 
 
 public class FormActivity extends Activity {
 
-    private Record mRecord;
     private ImageView mImageView;
     protected Context mContext;
-    private static final String BASELINE_EMAIL_ADDRESS = "sharkbaselines@gmail.com";
     private String mImagePath;
     private String mEmail;
     private String mNotes;
@@ -41,11 +40,10 @@ public class FormActivity extends Activity {
 
         mContext = getApplicationContext();
         mImageView = (ImageView) findViewById(R.id.imageView);
-        mRecord = new Record();
 
         File imgFile = new File(getIntent().getExtras().getString(StartActivity.KEY_IMAGE_PATH));
 
-        mRecord.setImage(getIntent().getExtras().getString(StartActivity.KEY_IMAGE_PATH));
+
 
         if(imgFile.exists()){
             Bitmap imgBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
@@ -56,15 +54,15 @@ public class FormActivity extends Activity {
 
 
 
-        //create new record and set image path
-        mRecord = new Record();
+        //Store image path
+
         mImagePath = getIntent().getExtras().getString(StartActivity.KEY_IMAGE_PATH);
 
     }
 
     public void showAlertDialog(String message, String positiveButton, String negativeButton)
     {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this,2);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(message)
                 .setCancelable(false)
                 .setPositiveButton(positiveButton, new DialogInterface.OnClickListener() {

@@ -23,16 +23,12 @@ public class StartActivity extends Activity {
 
     public static final String KEY_IMAGE_PATH = "KEY_IMAGE_PATH";
 
-    //moved to FormActivity//
-    //private ImageView mImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
 
-        //moved to FormActivity//
-        //mImageView = (ImageView) findViewById(R.id.imageView);
     }
 
     @Override
@@ -117,7 +113,6 @@ public class StartActivity extends Activity {
         if (i.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(i, ACTION_CAMERA_SELECTED);
         }
-
     }
 
     //get path
@@ -132,8 +127,6 @@ public class StartActivity extends Activity {
         cursor.close();
         return picturePath;
     }
-
-    //fixed spelling errors
 
     //get image info
     private String getImageFromCamera() {
