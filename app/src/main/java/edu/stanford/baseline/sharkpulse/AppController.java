@@ -1,7 +1,10 @@
 package edu.stanford.baseline.sharkpulse;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -27,7 +30,6 @@ public class AppController {
     private static final String TESTSHARK_URL = "http://testshark.herokuapp.com/recoreds/create";
     private static final String BASELINE_URL = "http://baseline2.stanford.edu/uploadImage.php";
     private static final String BASELINE_EMAIL_ADDRESS = "sharkbaselines@gmail.com";
-    private static final String LOG_TAG = AppController.class.getSimpleName();
 
     private static AppController sInstance;
 
@@ -36,13 +38,15 @@ public class AppController {
 
     private Record mRecord;
     private Context mContext;
+    protected boolean alertDialog;
 
     private AppController(Context context) {
         mContext = context;
         mRecord = new Record();
-
         // Acquire a reference to the system Location Manager
         mLocationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
+        alertDialog = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
     }
 
     public static AppController getInstance(Context context) {
@@ -62,16 +66,15 @@ public class AppController {
     }
 
     void startGPS() {
+
+
         // Define a listener that responds to location updates
 
         mLocationListener = new LocationListener() {
 
             public void onLocationChanged(Location location) {
                 // set the record
-
-                Log.v(LOG_TAG, "onLocationChanged");
                 mRecord.setCoordinates(location.getLatitude(), location.getLongitude());
-
                 //once we have everything for the record, send data
                 sendData();
                 // unregister the listener
@@ -81,23 +84,23 @@ public class AppController {
             @Override
             public void onStatusChanged(String provider, int status, Bundle extras) {
                 // todo check gps unavailable
-                Log.v(LOG_TAG, "onStatusChanged");
             }
 
             @Override
             public void onProviderEnabled(String provider) {
-                Log.v(LOG_TAG, "onProviderEnabled");
+                alertDialog = true;
+
             }
 
             @Override
             public void onProviderDisabled(String provider) {
-                Log.v(LOG_TAG, "onProviderDisabled");
             }
         };
 
         // Register the listener with the Location Manager to receive location updates
         mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,0,0,
                 mLocationListener);
+
     }
 
     protected void stopGPS() {
@@ -106,6 +109,7 @@ public class AppController {
 
 
     protected void sendData() {
+        alertDialog = true;
         switch (SEND_MODE) {
             case MODE_EMAIL: sendEmail();
                 break;
