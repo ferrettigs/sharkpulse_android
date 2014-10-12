@@ -143,7 +143,6 @@ public class StartActivity extends Activity {
                 startActivityForResult(i, ACTION_CAMERA_SELECTED);
             }
         }
-
     }
 
     //get path
