@@ -19,19 +19,15 @@ public class StartActivity extends Activity {
     public static final int ACTION_CAMERA_SELECTED = 1;
     public static final String KEY_IMAGE_PATH = "KEY_IMAGE_PATH";
     public static final String KEY_IS_GALLERY = "KEY_IS_GALLERY";
-    public static final String KEY_LONGITUDE = "KEY_LONGITUDE";
-    public static final String KEY_LATITUDE = "KEY_LATITUDE";
     protected Context mContext;
-    protected AppController mController;
-    protected Record mRecord;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        onOpenCamera();
         setContentView(R.layout.activity_start);
         mContext = getApplicationContext();
-        mController = AppController.getInstance(mContext);
-        mRecord = mController.getRecord();
+
     }
 
     @Override
@@ -39,24 +35,6 @@ public class StartActivity extends Activity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.start, menu);
         return true;
-    }
-
-    public void showAlertDialog(String message, String positiveButton, String negativeButton) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(message)
-                .setCancelable(false)
-                .setPositiveButton(positiveButton, new DialogInterface.OnClickListener() {
-                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-                    }
-                })
-                .setNegativeButton(negativeButton, new DialogInterface.OnClickListener() {
-                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                        dialog.cancel();
-                    }
-                });
-        final AlertDialog alert = builder.create();
-        alert.show();
     }
 
     @Override
@@ -107,8 +85,6 @@ public class StartActivity extends Activity {
         }
         if (picturePath != null) {
             Intent intent = new Intent(this, FormActivity.class);
-            intent.putExtra(KEY_LATITUDE, mRecord.mLatitude);
-            intent.putExtra(KEY_LONGITUDE, mRecord.mLongitude);
             intent.putExtra(KEY_IMAGE_PATH, picturePath);
             intent.putExtra(KEY_IS_GALLERY, isGallery);
             startActivity(intent);
@@ -130,18 +106,10 @@ public class StartActivity extends Activity {
     }
 
     public void onOpenCamera() {
-        // check the GPS
-        mController.startGPS();
-
-        if (!mController.alertDialog)
-            showAlertDialog("GPS is not enabled. Do you want to go to settings menu?", "Settings", "Cancel");
-
-        if (mController.alertDialog) {
-            // launch the intent
-            final Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            if (i.resolveActivity(getPackageManager()) != null) {
-                startActivityForResult(i, ACTION_CAMERA_SELECTED);
-            }
+        // launch the intent
+        final Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (i.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(i, ACTION_CAMERA_SELECTED);
         }
     }
 

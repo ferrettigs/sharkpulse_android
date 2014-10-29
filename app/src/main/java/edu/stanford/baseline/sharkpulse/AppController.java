@@ -13,7 +13,7 @@ import java.io.Serializable;
  * Created by Emanuel Mazzilli on 9/16/14.
  */
 @SuppressWarnings("serial")
-public class AppController implements Serializable{
+public class AppController{
 
     // open the default email with a preconfigure email to sharkpulse
     private static final int MODE_EMAIL = 0;

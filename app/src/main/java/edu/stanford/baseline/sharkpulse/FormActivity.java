@@ -2,17 +2,22 @@ package edu.stanford.baseline.sharkpulse;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Looper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
+
 import java.io.File;
 
 public class FormActivity extends Activity {
@@ -22,12 +27,14 @@ public class FormActivity extends Activity {
     private EditText mEditLatitude;
     protected Context mContext;
     private String mImagePath;
+    private double mLatitude;
+    private double mLongitude;
     private String mEmail;
     private String mNotes;
     private String mGuessSpecies;
-    private double mLongitude;
-    private double mLatitude;
     private AppController mController;
+    protected Record mRecord;
+    private boolean c;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,15 +46,37 @@ public class FormActivity extends Activity {
         mEditLatitude = (EditText) findViewById(R.id.latitude_field);
         mEditLongitude = (EditText) findViewById(R.id.longitude_field);
         mController = AppController.getInstance(mContext);
+        mRecord = mController.getRecord();
+        mLatitude = mRecord.mLatitude;
+        mLongitude = mRecord.mLongitude;
 
         if (!getIntent().getExtras().getBoolean(StartActivity.KEY_IS_GALLERY)) {
-            mEditLatitude.setText(Double.toString(getIntent().getExtras().getDouble(StartActivity.KEY_LATITUDE)));
-            mEditLongitude.setText(Double.toString(getIntent().getExtras().getDouble(StartActivity.KEY_LONGITUDE)));
-            mEditLatitude.setClickable(false);
-            mEditLatitude.setFocusable(false);
-            mEditLongitude.setClickable(false);
-            mEditLongitude.setFocusable(false);
+
+            if (!mController.alertDialog) {
+
+                showAlertDialog("GPS is not enabled. Do you want to go to settings menu?", "Settings", "Cancel");
+
+                if (mController.alertDialog) {
+                    mController.startGPS();
+                    mEditLatitude.setClickable(false);
+                    mEditLatitude.setFocusable(false);
+                    mEditLongitude.setClickable(false);
+                    mEditLongitude.setFocusable(false);
+                    mEditLatitude.setText(Double.toString(mRecord.mLatitude));
+                    mEditLongitude.setText(Double.toString(mRecord.mLongitude));
+                }
+            }
+            else{
+                mController.startGPS();
+                mEditLatitude.setClickable(false);
+                mEditLatitude.setFocusable(false);
+                mEditLongitude.setClickable(false);
+                mEditLongitude.setFocusable(false);
+                mEditLatitude.setText(Double.toString(mRecord.mLatitude));
+                mEditLongitude.setText(Double.toString(mRecord.mLongitude));
+            }
         }
+
         File imgFile = new File(getIntent().getExtras().getString(StartActivity.KEY_IMAGE_PATH));
 
         if(imgFile.exists()){
@@ -67,16 +96,19 @@ public class FormActivity extends Activity {
                 .setCancelable(false)
                 .setPositiveButton(positiveButton, new DialogInterface.OnClickListener() {
                     public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        //c = true;
                         startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
                     }
                 })
                 .setNegativeButton(negativeButton, new DialogInterface.OnClickListener() {
                     public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                       // c = false;
                         dialog.cancel();
                     }
                 });
         final AlertDialog alert = builder.create();
         alert.show();
+       // return c;
     }
 
     @Override
@@ -102,18 +134,35 @@ public class FormActivity extends Activity {
 
         if (view.getId() == R.id.button_send) {
             // pack all the info
+            if (!mController.alertDialog) {
+
+
+                /////////////////////////////
+                //////launch google maps/////
+                Toast.makeText(getApplicationContext(), "this should pop up the map", Toast.LENGTH_SHORT).show();
+                /////////////////////////////
+
+                mEditLatitude.setClickable(false);
+                mEditLatitude.setFocusable(false);
+                mEditLongitude.setClickable(false);
+                mEditLongitude.setFocusable(false);
+                ///mEditLatitude.setText(///latitude from google maps///);
+                ///mEditLongitude.setText(///longitude from google maps///);
+
+
+            }
             mGuessSpecies = ((EditText) findViewById(R.id.species_field))
                     .getText().toString();
 
             mEmail = ((EditText) findViewById(R.id.email_field)).getText().toString();
             mNotes = ((EditText) findViewById(R.id.notes_field)).getText().toString();
-            mLongitude = getIntent().getExtras().getDouble(StartActivity.KEY_LONGITUDE);
-            mLatitude = getIntent().getExtras().getDouble(StartActivity.KEY_LATITUDE);
 
             if (!getIntent().getExtras().getBoolean(StartActivity.KEY_IS_GALLERY)) {
-                mController.setData(mGuessSpecies, mEmail, mNotes, mImagePath, mLongitude, mLatitude);
+                mController.setData(mGuessSpecies, mEmail, mNotes, mImagePath, mRecord.mLongitude, mRecord.mLatitude);
             } else
                 mController.setData(mGuessSpecies, mEmail, mNotes, mImagePath);
+
+            mController.sendData();
         }
     }
 }
