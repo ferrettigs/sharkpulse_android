@@ -43,19 +43,13 @@ public class FormActivity extends Activity {
 
         File imgFile = new File(getIntent().getExtras().getString(StartActivity.KEY_IMAGE_PATH));
 
-
-
         if(imgFile.exists()){
             Bitmap imgBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
             Bitmap resizedBitmap = Bitmap.createScaledBitmap(imgBitmap,(int)(imgBitmap.getWidth()*0.8), (int)(imgBitmap.getHeight()*0.8), true);
             mImageView.setImageBitmap(resizedBitmap);
         }
 
-
-
-
         //Store image path
-
         mImagePath = getIntent().getExtras().getString(StartActivity.KEY_IMAGE_PATH);
 
     }
@@ -112,10 +106,12 @@ public class FormActivity extends Activity {
             AppController controller = AppController.getInstance(mContext);
             if(!controller.alertDialog)
                 showAlertDialog("GPS is not enabled. Do you want to go to settings menu?", "Settings","Cancel");
-            controller.startGPS();
-            controller.setData(mGuessSpecies, mEmail, mNotes, mImagePath);
+            else {
+                controller.setData(mGuessSpecies, mEmail, mNotes, mImagePath);
+                controller.startGPS();
 
-            Toast.makeText(mContext, "Getting GPS coordinates...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "Getting GPS coordinates...", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }
