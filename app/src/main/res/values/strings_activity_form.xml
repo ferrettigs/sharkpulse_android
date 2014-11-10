@@ -8,5 +8,7 @@
     <string name="prompt_email">Email</string>
     <string name="prompt_notes">Notes</string>
     <string name="prompt_notes_long">Notes</string>
+    <string name="prompt_latitude">Latitude</string>
+    <string name="prompt_longitude">Longitude</string>
 
 </resources>

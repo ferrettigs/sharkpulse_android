@@ -2,7 +2,6 @@ package edu.stanford.baseline.sharkpulse;
 
 
 import android.content.Context;
-
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -11,9 +10,7 @@ import android.os.Bundle;
 import android.content.Intent;
 import android.util.Log;
 
-
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpException;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -32,7 +29,7 @@ import java.text.SimpleDateFormat;
 /**
  * Created by Emanuel Mazzilli on 9/16/14.
  */
-public class AppController {
+public class AppController{
 
     // open the default email with a preconfigure email to sharkpulse
     private static final int MODE_EMAIL = 0;
@@ -90,13 +87,27 @@ public class AppController {
         return sInstance;
     }
 
-    // todo change ambiguous name
+    public Record getRecord(){
+        return mRecord;
+    }
+
     void setData(String species, String email, String notes, String imagePath) {
         // Set instance variables of record
         mRecord.mGuessSpecies = species;
         mRecord.mEmail = email;
         mRecord.mNotes = notes;
         mRecord.mImagePath = "file://" + imagePath;
+        mRecord.setCurrentDate();
+        mRecord.mTime = localDateFormat.format(mRecord.mDate);
+    }
+
+    void setData(String species, String email, String notes, String imagePath, Double longitude, Double latitude) {
+        mRecord.mGuessSpecies = species;
+        mRecord.mEmail = email;
+        mRecord.mNotes = notes;
+        mRecord.mImagePath = "file://" + imagePath;
+        mRecord.mLongitude = longitude;
+        mRecord.mLatitude = latitude;
         mRecord.setCurrentDate();
         mRecord.mTime = localDateFormat.format(mRecord.mDate);
     }
@@ -109,8 +120,7 @@ public class AppController {
             public void onLocationChanged(Location location) {
                 // set the record
                 mRecord.setCoordinates(location.getLatitude(), location.getLongitude());
-                //once we have everything for the record, send data
-                sendData();
+
                 // unregister the listener
                 stopGPS();
             }
@@ -123,7 +133,6 @@ public class AppController {
             @Override
             public void onProviderEnabled(String provider) {
                 alertDialog = true;
-
             }
 
             @Override

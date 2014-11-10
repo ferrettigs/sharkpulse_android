@@ -4,30 +4,29 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
-import android.util.Log;
-import android.widget.Toast;
 
 public class StartActivity extends Activity {
 
     public static final int ACTION_GALLERY_SELECTED = 0;
     public static final int ACTION_CAMERA_SELECTED = 1;
-
     public static final String KEY_IMAGE_PATH = "KEY_IMAGE_PATH";
-
+    public static final String KEY_IS_GALLERY = "KEY_IS_GALLERY";
+    protected Context mContext;
 
     @Override
+
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+        onOpenCamera();
         setContentView(R.layout.activity_start);
+        mContext = getApplicationContext();
 
     }
 
@@ -52,7 +51,6 @@ public class StartActivity extends Activity {
 
     public void onOpenGallery() {
         // start activity for results
-
         // launch the intent
         Intent i = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -61,14 +59,15 @@ public class StartActivity extends Activity {
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         String picturePath = null;
+        boolean isGallery = false;
         if (requestCode == ACTION_GALLERY_SELECTED) {
             switch (resultCode) {
                 case Activity.RESULT_OK:
                     //if gallery went ok, get path from image
                     picturePath = getSelectedImageFromGallery(data, this);
+                    isGallery = true;
                     break;
                 case Activity.RESULT_CANCELED:
-                    // re-launching the activity!? (what is this)
                     break;
                 default:
                     break;
@@ -79,7 +78,6 @@ public class StartActivity extends Activity {
                     picturePath = getImageFromCamera();
                     break;
                 case Activity.RESULT_CANCELED:
-                    // re-launching the activity!?
                     break;
                 default:
                     break;
@@ -88,26 +86,30 @@ public class StartActivity extends Activity {
         if (picturePath != null) {
             Intent intent = new Intent(this, FormActivity.class);
             intent.putExtra(KEY_IMAGE_PATH, picturePath);
+            intent.putExtra(KEY_IS_GALLERY, isGallery);
             startActivity(intent);
         }
+        isGallery = false;
     }
 
     public void onClick(View view) {
-        Toast.makeText(this, "You clicked the button", Toast.LENGTH_SHORT).show();
         switch (view.getId()) {
             case R.id.buttonGallery:
-                onOpenGallery();
+                //onOpenGallery();
+                Intent intent = new Intent(this, FormActivity.class);
+                startActivity(intent);
                 break;
             case R.id.buttonTakePicture:
-                onOpenCamera();
+                //onOpenCamera();
+                Intent newIntent = new Intent(this,FormActivity.class);
+                startActivity(newIntent);
                 break;
-            default: break;
+            default:
+                break;
         }
     }
 
     public void onOpenCamera() {
-        // check the GPS
-
         // launch the intent
         final Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (i.resolveActivity(getPackageManager()) != null) {
@@ -117,8 +119,9 @@ public class StartActivity extends Activity {
 
     //get path
     public String getSelectedImageFromGallery(Intent data, Context context) {
+        //TODO: Extract exif data from picture in gallery if it exists
         final Uri selectedImage = data.getData();
-        final String[] filePathColumn = { MediaStore.Images.Media.DATA,MediaStore.Images.ImageColumns.ORIENTATION };
+        final String[] filePathColumn = {MediaStore.Images.Media.DATA, MediaStore.Images.ImageColumns.ORIENTATION};
         final Cursor cursor = context.getContentResolver()
                 .query(selectedImage, filePathColumn, null, null, null);
         cursor.moveToFirst();

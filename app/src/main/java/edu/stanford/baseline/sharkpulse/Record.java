@@ -1,7 +1,5 @@
 package edu.stanford.baseline.sharkpulse;
 
-import android.graphics.Bitmap;
-
 import java.util.Date;
 
 /**
