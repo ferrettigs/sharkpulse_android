@@ -15,6 +15,7 @@ public class Record {
     protected double mLatitude;
     protected double mLongitude;
     protected Date mDate;
+    protected String mTime;
 
     protected String mImagePath;
 

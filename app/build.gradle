@@ -17,6 +17,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+     packagingOptions {
+            exclude 'META-INF/DEPENDENCIES'
+            exclude 'META-INF/NOTICE'
+            exclude 'META-INF/LICENSE'
+     }
 }
 
 dependencies {
@@ -24,4 +30,6 @@ dependencies {
     compile 'com.android.support:support-v4:19.1.0'
     compile 'com.google.android.gms:play-services:4.4.52'
     compile 'com.android.support:appcompat-v7:19.1.0'
+    androidTestCompile 'com.jayway.android.robotium:robotium-solo:5.2.1'
+
 }

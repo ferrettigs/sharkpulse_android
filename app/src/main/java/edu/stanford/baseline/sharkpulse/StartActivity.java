@@ -1,9 +1,7 @@
 package edu.stanford.baseline.sharkpulse;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -22,7 +20,9 @@ public class StartActivity extends Activity {
     protected Context mContext;
 
     @Override
+
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         onOpenCamera();
         setContentView(R.layout.activity_start);
@@ -95,10 +95,14 @@ public class StartActivity extends Activity {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.buttonGallery:
-                onOpenGallery();
+                //onOpenGallery();
+                Intent intent = new Intent(this, FormActivity.class);
+                startActivity(intent);
                 break;
             case R.id.buttonTakePicture:
-                onOpenCamera();
+                //onOpenCamera();
+                Intent newIntent = new Intent(this,FormActivity.class);
+                startActivity(newIntent);
                 break;
             default:
                 break;
@@ -115,6 +119,7 @@ public class StartActivity extends Activity {
 
     //get path
     public String getSelectedImageFromGallery(Intent data, Context context) {
+        //TODO: Extract exif data from picture in gallery if it exists
         final Uri selectedImage = data.getData();
         final String[] filePathColumn = {MediaStore.Images.Media.DATA, MediaStore.Images.ImageColumns.ORIENTATION};
         final Cursor cursor = context.getContentResolver()

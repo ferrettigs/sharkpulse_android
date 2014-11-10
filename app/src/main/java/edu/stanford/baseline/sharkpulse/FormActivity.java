@@ -2,15 +2,13 @@ package edu.stanford.baseline.sharkpulse;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Looper;
+import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,14 +32,14 @@ public class FormActivity extends Activity {
     private String mGuessSpecies;
     private AppController mController;
     protected Record mRecord;
-    private boolean c;
+    private static final int ACTION_MAP = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_form);
 
-        mContext = getApplicationContext();
+        mContext = FormActivity.this;
         mImageView = (ImageView) findViewById(R.id.imageView);
         mEditLatitude = (EditText) findViewById(R.id.latitude_field);
         mEditLongitude = (EditText) findViewById(R.id.longitude_field);
@@ -53,8 +51,8 @@ public class FormActivity extends Activity {
         if (!getIntent().getExtras().getBoolean(StartActivity.KEY_IS_GALLERY)) {
 
             if (!mController.alertDialog) {
-
-                showAlertDialog("GPS is not enabled. Do you want to go to settings menu?", "Settings", "Cancel");
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                Utility.showAlertDialog("GPS is not enabled. Do you want to go to settings menu?", "Settings", "Cancel", mContext, intent);
 
                 if (mController.alertDialog) {
                     mController.startGPS();
@@ -86,30 +84,11 @@ public class FormActivity extends Activity {
         }
 
         //create new record and set image path
+
         mImagePath = getIntent().getExtras().getString(StartActivity.KEY_IMAGE_PATH);
     }
 
-    public void showAlertDialog(String message, String positiveButton, String negativeButton)
-    {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(message)
-                .setCancelable(false)
-                .setPositiveButton(positiveButton, new DialogInterface.OnClickListener() {
-                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                        //c = true;
-                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-                    }
-                })
-                .setNegativeButton(negativeButton, new DialogInterface.OnClickListener() {
-                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                       // c = false;
-                        dialog.cancel();
-                    }
-                });
-        final AlertDialog alert = builder.create();
-        alert.show();
-       // return c;
-    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -139,7 +118,10 @@ public class FormActivity extends Activity {
 
                 /////////////////////////////
                 //////launch google maps/////
-                Toast.makeText(getApplicationContext(), "this should pop up the map", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "this should pop up the map", Toast.LENGTH_SHORT).show();
+
+                Intent mapIntent = new Intent(this, MapActivity.class);
+                startActivityForResult(mapIntent, ACTION_MAP);
                 /////////////////////////////
 
                 mEditLatitude.setClickable(false);
@@ -162,7 +144,29 @@ public class FormActivity extends Activity {
             } else
                 mController.setData(mGuessSpecies, mEmail, mNotes, mImagePath);
 
+            AppController controller = AppController.getInstance(mContext);
+            if(!controller.alertDialog) {
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                Utility.showAlertDialog("GPS is not enabled. Do you want to go to settings menu", "Settings", "Cancel", mContext, intent);
+                //showAlertDialog("GPS is not enabled. Do you want to go to settings menu?", "Settings","Cancel");
+            }
+            else {
+                controller.setData(mGuessSpecies, mEmail, mNotes, mImagePath);
+                controller.startGPS();
+
+                Toast.makeText(mContext, "Getting GPS coordinates...", Toast.LENGTH_SHORT).show();
+            }
             mController.sendData();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == ACTION_MAP){
+            if(resultCode == RESULT_OK){
+                String coordinates = data.getStringExtra("Coordinates");
+                Toast.makeText(getApplicationContext(), "Coordinates: " + coordinates, Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }
