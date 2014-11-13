@@ -68,6 +68,7 @@ public class StartActivity extends Activity {
                     isGallery = true;
                     break;
                 case Activity.RESULT_CANCELED:
+
                     break;
                 default:
                     break;
@@ -78,6 +79,7 @@ public class StartActivity extends Activity {
                     picturePath = getImageFromCamera();
                     break;
                 case Activity.RESULT_CANCELED:
+
                     break;
                 default:
                     break;
@@ -89,20 +91,15 @@ public class StartActivity extends Activity {
             intent.putExtra(KEY_IS_GALLERY, isGallery);
             startActivity(intent);
         }
-        isGallery = false;
     }
 
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.buttonGallery:
-                //onOpenGallery();
-                Intent intent = new Intent(this, FormActivity.class);
-                startActivity(intent);
+                onOpenGallery();
                 break;
             case R.id.buttonTakePicture:
-                //onOpenCamera();
-                Intent newIntent = new Intent(this,FormActivity.class);
-                startActivity(newIntent);
+                onOpenCamera();
                 break;
             default:
                 break;

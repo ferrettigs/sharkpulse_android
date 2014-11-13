@@ -18,6 +18,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Created by Daniel Diaz on 10/25/14.
  */
@@ -26,6 +30,8 @@ public class MapActivity extends FragmentActivity implements GoogleMap.OnMarkerD
     private Button mButton = null;
     private Marker position = null;
     private static Context mContext = null;
+    public static final String KEY_LATITUDE = "KEY_LATITUDE";
+    public static final String KEY_LONGITUDE = "KEY_LONGITUDE";
 
 
 
@@ -65,8 +71,18 @@ public class MapActivity extends FragmentActivity implements GoogleMap.OnMarkerD
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.coordinateButton:
-               Log.v(LOG_TAG, "Position of pin: " + getPosition().toString());
-               showMapAlertDialog("Are you sure these are the coordinates?", "Confirm", "Cancel", getPosition().toString());
+               //Log.v(LOG_TAG, "Position of pin: " + getPosition().toString());
+                int length = getPosition().toString().length();
+
+                String coordinates = getPosition().toString().substring(10, length - 1);
+
+                Log.v(LOG_TAG, coordinates);
+
+                String[] latitude_longitude = coordinates.split(",");
+
+                Log.v(LOG_TAG, "Latitude: " + latitude_longitude[0] + " " + "Longitude: " + latitude_longitude[1]);
+
+               showMapAlertDialog("Are you sure these are the coordinates?", "Confirm", "Cancel", latitude_longitude);
 
             break;
         }
@@ -109,7 +125,7 @@ public class MapActivity extends FragmentActivity implements GoogleMap.OnMarkerD
     /*
         show confirmation dialog to confirm coordinates of sighting
      */
-    public void showMapAlertDialog(String message, String positiveButton, String negativeButton, final String coordinates)
+    public void showMapAlertDialog(String message, String positiveButton, String negativeButton, final String[] coordinates)
     {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
@@ -118,7 +134,8 @@ public class MapActivity extends FragmentActivity implements GoogleMap.OnMarkerD
                 .setPositiveButton(positiveButton, new DialogInterface.OnClickListener() {
                     public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
                         Intent intent = new Intent();
-                        intent.putExtra("Coordinates", coordinates);
+                        intent.putExtra(KEY_LATITUDE, coordinates[0]);
+                        intent.putExtra(KEY_LONGITUDE, coordinates[1]);
                         setResult(RESULT_OK, intent);
                         finish();
                     }
