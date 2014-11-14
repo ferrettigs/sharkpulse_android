@@ -108,8 +108,8 @@ public class FormActivity extends Activity {
 
             mEmail = ((EditText) findViewById(R.id.email_field)).getText().toString();
             mNotes = ((EditText) findViewById(R.id.notes_field)).getText().toString();
-            mLongitude = Double.parseDouble(getIntent().getExtras().getString(KEY_LONGITUDE));
-            mLatitude = Double.parseDouble(getIntent().getExtras().getString(KEY_LATITUDE));
+           // mLongitude = Double.parseDouble(getIntent().getExtras().getString(KEY_LONGITUDE));
+          //  mLatitude = Double.parseDouble(getIntent().getExtras().getString(KEY_LATITUDE));
 
             if (!getIntent().getExtras().getBoolean(StartActivity.KEY_IS_GALLERY)) {
                 mController.setData(mGuessSpecies, mEmail, mNotes, mImagePath, mRecord.mLongitude, mRecord.mLatitude);
@@ -137,6 +137,9 @@ public class FormActivity extends Activity {
             if(resultCode == RESULT_OK){
                 String coordinates = data.getStringExtra("Coordinates");
                 Toast.makeText(getApplicationContext(), "Coordinates: " + coordinates, Toast.LENGTH_SHORT).show();
+                mLongitude = Double.parseDouble(getIntent().getExtras().getString(KEY_LONGITUDE));
+                mLatitude = Double.parseDouble(getIntent().getExtras().getString(KEY_LATITUDE));
+
             }
         }
     }
