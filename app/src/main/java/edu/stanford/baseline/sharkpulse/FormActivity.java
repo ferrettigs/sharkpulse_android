@@ -21,18 +21,18 @@ import java.io.File;
 public class FormActivity extends Activity {
 
     private ImageView mImageView;
-    private EditText mEditLongitude;
-    private EditText mEditLatitude;
     protected Context mContext;
     private String mImagePath;
-    private double mLatitude;
-    private double mLongitude;
+    private String mLatitude;
+    private String mLongitude;
     private String mEmail;
     private String mNotes;
     private String mGuessSpecies;
     private AppController mController;
     protected Record mRecord;
     private static final int ACTION_MAP = 0;
+    public static final String KEY_LATITUDE = "KEY_LATITUDE";
+    public static final String KEY_LONGITUDE = "KEY_LONGITUDE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,12 +41,10 @@ public class FormActivity extends Activity {
 
         mContext = FormActivity.this;
         mImageView = (ImageView) findViewById(R.id.imageView);
-        mEditLatitude = (EditText) findViewById(R.id.latitude_field);
-        mEditLongitude = (EditText) findViewById(R.id.longitude_field);
         mController = AppController.getInstance(mContext);
         mRecord = mController.getRecord();
-        mLatitude = mRecord.mLatitude;
-        mLongitude = mRecord.mLongitude;
+        mLatitude = Double.toString(mRecord.mLatitude);
+        mLongitude = Double.toString(mRecord.mLongitude);
 
         if (!getIntent().getExtras().getBoolean(StartActivity.KEY_IS_GALLERY)) {
 
@@ -56,22 +54,10 @@ public class FormActivity extends Activity {
 
                 if (mController.alertDialog) {
                     mController.startGPS();
-                    mEditLatitude.setClickable(false);
-                    mEditLatitude.setFocusable(false);
-                    mEditLongitude.setClickable(false);
-                    mEditLongitude.setFocusable(false);
-                    mEditLatitude.setText(Double.toString(mRecord.mLatitude));
-                    mEditLongitude.setText(Double.toString(mRecord.mLongitude));
                 }
             }
             else{
                 mController.startGPS();
-                mEditLatitude.setClickable(false);
-                mEditLatitude.setFocusable(false);
-                mEditLongitude.setClickable(false);
-                mEditLongitude.setFocusable(false);
-                mEditLatitude.setText(Double.toString(mRecord.mLatitude));
-                mEditLongitude.setText(Double.toString(mRecord.mLongitude));
             }
         }
 
@@ -114,30 +100,16 @@ public class FormActivity extends Activity {
         if (view.getId() == R.id.button_send) {
             // pack all the info
             if (!mController.alertDialog) {
-
-
-                /////////////////////////////
-                //////launch google maps/////
-                //Toast.makeText(getApplicationContext(), "this should pop up the map", Toast.LENGTH_SHORT).show();
-
                 Intent mapIntent = new Intent(this, MapActivity.class);
                 startActivityForResult(mapIntent, ACTION_MAP);
-                /////////////////////////////
-
-                mEditLatitude.setClickable(false);
-                mEditLatitude.setFocusable(false);
-                mEditLongitude.setClickable(false);
-                mEditLongitude.setFocusable(false);
-                ///mEditLatitude.setText(///latitude from google maps///);
-                ///mEditLongitude.setText(///longitude from google maps///);
-
-
             }
             mGuessSpecies = ((EditText) findViewById(R.id.species_field))
                     .getText().toString();
 
             mEmail = ((EditText) findViewById(R.id.email_field)).getText().toString();
             mNotes = ((EditText) findViewById(R.id.notes_field)).getText().toString();
+           // mLongitude = Double.parseDouble(getIntent().getExtras().getString(KEY_LONGITUDE));
+          //  mLatitude = Double.parseDouble(getIntent().getExtras().getString(KEY_LATITUDE));
 
             if (!getIntent().getExtras().getBoolean(StartActivity.KEY_IS_GALLERY)) {
                 mController.setData(mGuessSpecies, mEmail, mNotes, mImagePath, mRecord.mLongitude, mRecord.mLatitude);
@@ -148,7 +120,6 @@ public class FormActivity extends Activity {
             if(!controller.alertDialog) {
                 Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                 Utility.showAlertDialog("GPS is not enabled. Do you want to go to settings menu", "Settings", "Cancel", mContext, intent);
-                //showAlertDialog("GPS is not enabled. Do you want to go to settings menu?", "Settings","Cancel");
             }
             else {
                 controller.setData(mGuessSpecies, mEmail, mNotes, mImagePath);
@@ -164,8 +135,12 @@ public class FormActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == ACTION_MAP){
             if(resultCode == RESULT_OK){
-                String coordinates = data.getStringExtra("Coordinates");
-                Toast.makeText(getApplicationContext(), "Coordinates: " + coordinates, Toast.LENGTH_SHORT).show();
+                String latitude = data.getStringExtra(KEY_LATITUDE);
+                String longitude = data.getStringExtra(KEY_LONGITUDE);
+                Toast.makeText(getApplicationContext(), "Coordinates: " + latitude + " " + longitude, Toast.LENGTH_SHORT).show();
+                mLongitude = getIntent().getExtras().getString(KEY_LONGITUDE);
+                mLatitude = getIntent().getExtras().getString(KEY_LATITUDE);
+
             }
         }
     }

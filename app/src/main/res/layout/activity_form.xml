@@ -32,23 +32,6 @@
                 android:maxHeight="300dp"
                 android:src="@drawable/ic_launcher" />
 
-
-            <EditText
-                android:id="@+id/longitude_field"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="numberDecimal"
-                android:hint="@string/prompt_longitude"/>
-
-            <EditText
-                android:id="@+id/latitude_field"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="numberDecimal"
-                android:hint="@string/prompt_latitude"/>
-
             <EditText
                 android:id="@+id/species_field"
                 android:layout_width="match_parent"

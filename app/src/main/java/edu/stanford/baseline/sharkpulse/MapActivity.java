@@ -9,7 +9,6 @@ import android.os.Bundle;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -18,9 +17,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Created by Daniel Diaz on 10/25/14.
@@ -32,8 +28,6 @@ public class MapActivity extends FragmentActivity implements GoogleMap.OnMarkerD
     private static Context mContext = null;
     public static final String KEY_LATITUDE = "KEY_LATITUDE";
     public static final String KEY_LONGITUDE = "KEY_LONGITUDE";
-
-
 
     private final String LOG_TAG = MapActivity.class.getSimpleName();
 
