@@ -68,6 +68,7 @@ public class StartActivity extends Activity {
                     isGallery = true;
                     break;
                 case Activity.RESULT_CANCELED:
+
                     break;
                 default:
                     break;
@@ -78,6 +79,7 @@ public class StartActivity extends Activity {
                     picturePath = getImageFromCamera();
                     break;
                 case Activity.RESULT_CANCELED:
+
                     break;
                 default:
                     break;
