@@ -1,12 +1,11 @@
 package edu.stanford.baseline.sharkpulse;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.ExifInterface;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -16,21 +15,22 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
-
 import java.io.File;
+import java.io.IOException;
 
 public class FormActivity extends Activity {
 
     private ImageView mImageView;
     protected Context mContext;
     private String mImagePath;
-    private String mLatitude;
-    private String mLongitude;
+    private Double mLatitude;
+    private Double mLongitude;
     private String mEmail;
     private String mNotes;
     private String mGuessSpecies;
     private AppController mController;
     protected Record mRecord;
+    private boolean ExifDataNotFound = false;
     private static final int ACTION_MAP = 0;
     public static final String KEY_LATITUDE = "KEY_LATITUDE";
     public static final String KEY_LONGITUDE = "KEY_LONGITUDE";
@@ -45,21 +45,42 @@ public class FormActivity extends Activity {
         mImageView = (ImageView) findViewById(R.id.imageView);
         mController = AppController.getInstance(mContext);
         mRecord = mController.getRecord();
-        mLatitude = Double.toString(mRecord.mLatitude);
-        mLongitude = Double.toString(mRecord.mLongitude);
+        mLatitude = mRecord.mLatitude;
+        mLongitude = mRecord.mLongitude;
 
         if (!getIntent().getExtras().getBoolean(StartActivity.KEY_IS_GALLERY)) {
 
-            if (!mController.alertDialog) {
+            if (!mController.is_GPS_on) {
                 Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                 Utility.showAlertDialog("GPS is not enabled. Do you want to go to settings menu?", "Settings", "Cancel", mContext, intent);
 
-                if (mController.alertDialog) {
+                ////this helps reset the value of is_GPS_on
+                mController.startGPS();
+
+                if (mController.is_GPS_on) {
                     mController.startGPS();
                 }
             }
             else{
                 mController.startGPS();
+            }
+        }
+        else
+        {
+
+            ExifInterface exif;
+            try {
+                exif = new ExifInterface(getIntent().getExtras().getString(StartActivity.KEY_IMAGE_PATH));
+                if(exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE) != null && exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF) != null &&
+                   exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE) != null && exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF) != null) {
+                    mLatitude = Utility.convertToDegree(exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE), exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF));
+                    mLongitude = Utility.convertToDegree(exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE), exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF));
+                }
+                else{
+                    ExifDataNotFound = true;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
 
@@ -80,11 +101,8 @@ public class FormActivity extends Activity {
         }
 
         //create new record and set image path
-
         mImagePath = getIntent().getExtras().getString(StartActivity.KEY_IMAGE_PATH);
     }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -108,8 +126,13 @@ public class FormActivity extends Activity {
     public void onClick(View view) {
 
         if (view.getId() == R.id.button_send) {
+            //mController.startGPS();
             // pack all the info
-            if (!mController.alertDialog) {
+            if (!mController.is_GPS_on && !getIntent().getExtras().getBoolean(StartActivity.KEY_IS_GALLERY)) {
+                Intent mapIntent = new Intent(this, MapActivity.class);
+                startActivityForResult(mapIntent, ACTION_MAP);
+            }
+            else if(ExifDataNotFound){
                 Intent mapIntent = new Intent(this, MapActivity.class);
                 startActivityForResult(mapIntent, ACTION_MAP);
             }
@@ -118,25 +141,8 @@ public class FormActivity extends Activity {
 
             mEmail = ((EditText) findViewById(R.id.email_field)).getText().toString();
             mNotes = ((EditText) findViewById(R.id.notes_field)).getText().toString();
-           // mLongitude = Double.parseDouble(getIntent().getExtras().getString(KEY_LONGITUDE));
-          //  mLatitude = Double.parseDouble(getIntent().getExtras().getString(KEY_LATITUDE));
 
-            if (!getIntent().getExtras().getBoolean(StartActivity.KEY_IS_GALLERY)) {
-                mController.setData(mGuessSpecies, mEmail, mNotes, mImagePath, mRecord.mLongitude, mRecord.mLatitude);
-            } else
-                mController.setData(mGuessSpecies, mEmail, mNotes, mImagePath);
-
-            AppController controller = AppController.getInstance(mContext);
-            if(!controller.alertDialog) {
-                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                Utility.showAlertDialog("GPS is not enabled. Do you want to go to settings menu", "Settings", "Cancel", mContext, intent);
-            }
-            else {
-                controller.setData(mGuessSpecies, mEmail, mNotes, mImagePath);
-                controller.startGPS();
-
-                Toast.makeText(mContext, "Getting GPS coordinates...", Toast.LENGTH_SHORT).show();
-            }
+            mController.setData(mGuessSpecies, mEmail, mNotes, mImagePath, mLongitude, mLatitude);
             mController.sendData();
         }
     }
@@ -148,8 +154,8 @@ public class FormActivity extends Activity {
                 String latitude = data.getStringExtra(KEY_LATITUDE);
                 String longitude = data.getStringExtra(KEY_LONGITUDE);
                 Toast.makeText(getApplicationContext(), "Coordinates: " + latitude + " " + longitude, Toast.LENGTH_SHORT).show();
-                mLongitude = getIntent().getExtras().getString(KEY_LONGITUDE);
-                mLatitude = getIntent().getExtras().getString(KEY_LATITUDE);
+                mLongitude = Double.parseDouble(getIntent().getExtras().getString(KEY_LONGITUDE));
+                mLatitude = Double.parseDouble(getIntent().getExtras().getString(KEY_LATITUDE));
 
             }
         }
