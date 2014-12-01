@@ -62,7 +62,7 @@ public class AppController{
 
     private Record mRecord;
     private Context mContext;
-    protected boolean alertDialog;
+    protected boolean is_GPS_on;
 
     private SimpleDateFormat localDateFormat;
 
@@ -76,7 +76,7 @@ public class AppController{
         // Acquire a reference to the system Location Manager
         mLocationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
         // check if location tracking is currently off
-        alertDialog = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        is_GPS_on = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
     }
 
@@ -132,7 +132,7 @@ public class AppController{
 
             @Override
             public void onProviderEnabled(String provider) {
-                alertDialog = true;
+                is_GPS_on = true;
             }
 
             @Override
