@@ -11,7 +11,7 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
+import android.view.View;///
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -67,7 +67,6 @@ public class FormActivity extends Activity {
         }
         else
         {
-
             ExifInterface exif;
             try {
                 exif = new ExifInterface(getIntent().getExtras().getString(StartActivity.KEY_IMAGE_PATH));
@@ -93,8 +92,6 @@ public class FormActivity extends Activity {
                 Bitmap imgBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
                 Bitmap resizedBitmap = Bitmap.createScaledBitmap(imgBitmap, (int) (imgBitmap.getWidth() * 0.8), (int) (imgBitmap.getHeight() * 0.8), true);
                 mImageView.setImageBitmap(resizedBitmap);
-
-
         }
         else{
             Log.v(LOG_TAG, "img File does not exist");
@@ -138,12 +135,12 @@ public class FormActivity extends Activity {
             }
             mGuessSpecies = ((EditText) findViewById(R.id.species_field))
                     .getText().toString();
-
             mEmail = ((EditText) findViewById(R.id.email_field)).getText().toString();
             mNotes = ((EditText) findViewById(R.id.notes_field)).getText().toString();
 
             mController.setData(mGuessSpecies, mEmail, mNotes, mImagePath, mLongitude, mLatitude);
             mController.sendData();
+
         }
     }
 
