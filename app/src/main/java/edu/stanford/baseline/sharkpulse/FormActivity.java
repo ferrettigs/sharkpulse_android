@@ -154,8 +154,8 @@ public class FormActivity extends Activity {
                 String latitude = data.getStringExtra(KEY_LATITUDE);
                 String longitude = data.getStringExtra(KEY_LONGITUDE);
                 Toast.makeText(getApplicationContext(), "Coordinates: " + latitude + " " + longitude, Toast.LENGTH_SHORT).show();
-                mLongitude = Double.parseDouble(getIntent().getExtras().getString(KEY_LONGITUDE));
-                mLatitude = Double.parseDouble(getIntent().getExtras().getString(KEY_LATITUDE));
+                mLongitude = Double.parseDouble(data.getExtras().getString(KEY_LONGITUDE));
+                mLatitude = Double.parseDouble(data.getExtras().getString(KEY_LATITUDE));
 
             }
         }
