@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.media.ExifInterface;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,6 +34,7 @@ public class FormActivity extends Activity {
     private static final int ACTION_MAP = 0;
     public static final String KEY_LATITUDE = "KEY_LATITUDE";
     public static final String KEY_LONGITUDE = "KEY_LONGITUDE";
+    private static final String LOG_TAG = FormActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,9 +87,17 @@ public class FormActivity extends Activity {
         File imgFile = new File(getIntent().getExtras().getString(StartActivity.KEY_IMAGE_PATH));
 
         if(imgFile.exists()){
-            Bitmap imgBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-            Bitmap resizedBitmap = Bitmap.createScaledBitmap(imgBitmap,(int)(imgBitmap.getWidth()*0.8), (int)(imgBitmap.getHeight()*0.8), true);
-            mImageView.setImageBitmap(resizedBitmap);
+
+                Log.v(LOG_TAG, "imgFiles exists");
+                Log.v(LOG_TAG, "Path: " + imgFile.getAbsolutePath());
+                Bitmap imgBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+                Bitmap resizedBitmap = Bitmap.createScaledBitmap(imgBitmap, (int) (imgBitmap.getWidth() * 0.8), (int) (imgBitmap.getHeight() * 0.8), true);
+                mImageView.setImageBitmap(resizedBitmap);
+
+
+        }
+        else{
+            Log.v(LOG_TAG, "img File does not exist");
         }
 
         //create new record and set image path

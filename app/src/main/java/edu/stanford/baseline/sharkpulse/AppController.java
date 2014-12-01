@@ -8,6 +8,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.content.Intent;
+import android.os.Environment;
 import android.util.Log;
 
 import org.apache.http.HttpEntity;
@@ -17,6 +18,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
@@ -31,17 +33,15 @@ import java.text.SimpleDateFormat;
  */
 public class AppController{
 
-    // open the default email with a preconfigure email to sharkpulse
     private static final int MODE_EMAIL = 0;
-    // send the json to the endpoint http://baseline2.stanford.edu/uploadImage.php
     private static final int MODE_POST_BASELINE = 1;
-    // send the json to the endpoint http://testshark.herokuapp.com/recoreds/create
     private static final int MODE_POST_TESTSHARK = 2;
 
     private static final int SEND_MODE = MODE_POST_TESTSHARK;
 
     private static final String TESTSHARK_URL = "http://testshark.herokuapp.com/recoreds/create";
     private static final String BASELINE_URL = "http://baseline2.stanford.edu/uploadImage.php";
+    private static final String TEST_DEPLOYMENT = "http://54.67.32.82/EmailphpSharkPulse/mobileUpload.php";
     private static final String BASELINE_EMAIL_ADDRESS = "sharkbaselines@gmail.com";
     private static final String PHOTOGRAPH = "PHOTOGRAPH";
     private static final String LATITUDE = "LATITUDE";
@@ -55,8 +55,6 @@ public class AppController{
 
     private static AppController sInstance;
 
-
-
     protected LocationManager mLocationManager;
     protected LocationListener mLocationListener;
 
@@ -67,17 +65,12 @@ public class AppController{
     private SimpleDateFormat localDateFormat;
 
     private AppController(Context context) {
-        // get application context
         mContext = context;
-        // create record
         mRecord = new Record();
-        // format date to extract time
         localDateFormat = new SimpleDateFormat("HH:mm:ss");
-        // Acquire a reference to the system Location Manager
         mLocationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
         // check if location tracking is currently off
         is_GPS_on = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
     }
 
     public static AppController getInstance(Context context) {
@@ -96,7 +89,7 @@ public class AppController{
         mRecord.mGuessSpecies = species;
         mRecord.mEmail = email;
         mRecord.mNotes = notes;
-        mRecord.mImagePath = "file://" + imagePath;
+        mRecord.mImagePath = imagePath;
         mRecord.setCurrentDate();
         mRecord.mTime = localDateFormat.format(mRecord.mDate);
     }
@@ -105,7 +98,7 @@ public class AppController{
         mRecord.mGuessSpecies = species;
         mRecord.mEmail = email;
         mRecord.mNotes = notes;
-        mRecord.mImagePath = "file://" + imagePath;
+        mRecord.mImagePath = imagePath;
         mRecord.mLongitude = longitude;
         mRecord.mLatitude = latitude;
         mRecord.setCurrentDate();
@@ -162,16 +155,12 @@ public class AppController{
     }
 
     protected void sendEmail() {
-        //todo send post through email
 
-        // create new email intent and construct email address
         Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
                 "mailto",BASELINE_EMAIL_ADDRESS, null));
 
-        // since we're not inheriting from activity class, flag intent
         emailIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        // place subject line and body with all record information
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, "I saw a shark!!");
         emailIntent.putExtra(Intent.EXTRA_TEXT, "Date: " + mRecord.mDate
                                    + "\nLocation: " + mRecord.mLongitude + " , "
@@ -179,28 +168,22 @@ public class AppController{
                                    + mRecord.mGuessSpecies + "\nNotes: "
                                    + mRecord.mNotes) ;
 
-        // attach picture to email
         emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(mRecord.mImagePath));
-        // start activity from context of application
         mContext.startActivity(emailIntent);
     }
 
     protected void sendBaselinePost() {
-        //todo send post directly to php script (needs json encoding)
         postFile(mRecord, BASELINE_URL);
     }
 
     protected void sendTestsharkPost() {
-        //todo send post directly to test site
-        Log.v(LOG_TAG, "sendTestsharkPost");
-        postFile(mRecord, "http://192.168.1.82/~edsan/SharkPulse/website/baseline2/androidPost.php");
-
+        postFile(mRecord, TEST_DEPLOYMENT);
     }
 
     private static void postFile(final Record record, final String url){
         // create new file object from path
-        Log.v(LOG_TAG, record.mImagePath);
         Log.v(LOG_TAG, url);
+        final File sdDir = Environment.getExternalStorageDirectory();
         final File file = new File(record.mImagePath);
         final ResponseHandler<String> handler = new BasicResponseHandler();
 
@@ -218,8 +201,13 @@ public class AppController{
                     MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
                     multipartEntityBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-                    if(file != null){
-                        multipartEntityBuilder.addBinaryBody(PHOTOGRAPH, file);
+                    // attach record to POST request
+                    if(file.exists()){
+                        Log.v(LOG_TAG, "File exists!");
+                        multipartEntityBuilder.addPart(PHOTOGRAPH, new FileBody(file));
+                    }
+                    else{
+                        Log.v(LOG_TAG, "File does not exist");
                     }
 
                     Log.v(LOG_TAG, String.valueOf(record.mDate));
@@ -229,6 +217,7 @@ public class AppController{
                     Log.v(LOG_TAG, record.mEmail);
                     Log.v(LOG_TAG, record.mGuessSpecies);
                     Log.v(LOG_TAG, record.mNotes);
+                    Log.v(LOG_TAG, record.mImagePath);
 
                     // place record in json
                     multipartEntityBuilder.addTextBody(DATE, String.valueOf(record.mDate));
@@ -244,6 +233,7 @@ public class AppController{
 
                     HttpResponse response = client.execute(post);
                     String body  = handler.handleResponse(response);
+                    Log.v(LOG_TAG, "Works!");
                     Log.v(LOG_TAG, body);
 
 
@@ -254,7 +244,6 @@ public class AppController{
                     Log.v(LOG_TAG, "Fatal transport error: " + e.getMessage());
                 }
             }
-
         };
         thread.start();
     }
