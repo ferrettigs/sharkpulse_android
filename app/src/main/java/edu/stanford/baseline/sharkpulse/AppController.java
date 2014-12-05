@@ -37,7 +37,7 @@ public class AppController{
     private static final int MODE_POST_BASELINE = 1;
     private static final int MODE_POST_TESTSHARK = 2;
 
-    private static final int SEND_MODE = MODE_POST_TESTSHARK;
+    private static final int SEND_MODE = MODE_EMAIL;
 
     private static final String TESTSHARK_URL = "http://testshark.herokuapp.com/recoreds/create";
     private static final String BASELINE_URL = "http://baseline2.stanford.edu/uploadImage.php";

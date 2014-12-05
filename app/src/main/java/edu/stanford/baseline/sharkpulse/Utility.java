@@ -1,9 +1,16 @@
 package edu.stanford.baseline.sharkpulse;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.util.Patterns;
+
+import com.google.android.gms.ads.a;
+
+import java.util.regex.Pattern;
 
 /**
  * Created by Algernon on 11/10/14.
@@ -61,6 +68,21 @@ public class Utility {
             result *= -1;
 
         return result;
+    }
+    public static String getPlayStoreEmail(Context context){
+        //////////////////getting identification////////////////
+        mContext = context;
+        Pattern emailPattern = Patterns.EMAIL_ADDRESS;
+        Account[] accounts = AccountManager.get(mContext).getAccounts();
+        for (Account account : accounts) {
+            if (emailPattern.matcher(account.name).matches()) {
+                return account.name;
+
+
+            }
+        }
+        return null;
+        /////////////////////////////////////////////////////////
     }
 
 

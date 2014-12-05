@@ -55,17 +55,8 @@ public class FormActivity extends Activity {
         mLongitude = mRecord.mLongitude;
 
 
-        //////////////////getting identification////////////////
-        Pattern emailPattern = Patterns.EMAIL_ADDRESS;
-        Account[] accounts = AccountManager.get(mContext).getAccounts();
-        for (Account account : accounts) {
-            if (emailPattern.matcher(account.name).matches()) {
-                String possibleEmail = account.name;
-                mEmailEditText.setText(possibleEmail);
-                mEmailEditText.setKeyListener(null);
-            }
-        }
-        /////////////////////////////////////////////////////////
+        mEmailEditText.setText(Utility.getPlayStoreEmail(mContext));
+        mEmailEditText.setKeyListener(null);
 
         if (!getIntent().getExtras().getBoolean(StartActivity.KEY_IS_GALLERY)) {
 
