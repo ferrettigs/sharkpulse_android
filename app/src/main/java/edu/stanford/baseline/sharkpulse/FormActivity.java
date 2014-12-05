@@ -1,5 +1,7 @@
 package edu.stanford.baseline.sharkpulse;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +11,7 @@ import android.media.ExifInterface;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;///
@@ -17,10 +20,12 @@ import android.widget.ImageView;
 import android.widget.Toast;
 import java.io.File;
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 public class FormActivity extends Activity {
 
     private ImageView mImageView;
+    private EditText mEmailEditText;
     protected Context mContext;
     private String mImagePath;
     private Double mLatitude;
@@ -43,10 +48,24 @@ public class FormActivity extends Activity {
 
         mContext = FormActivity.this;
         mImageView = (ImageView) findViewById(R.id.imageView);
+        mEmailEditText = (EditText)findViewById(R.id.email_field);
         mController = AppController.getInstance(mContext);
         mRecord = mController.getRecord();
         mLatitude = mRecord.mLatitude;
         mLongitude = mRecord.mLongitude;
+
+
+        //////////////////getting identification////////////////
+        Pattern emailPattern = Patterns.EMAIL_ADDRESS;
+        Account[] accounts = AccountManager.get(mContext).getAccounts();
+        for (Account account : accounts) {
+            if (emailPattern.matcher(account.name).matches()) {
+                String possibleEmail = account.name;
+                mEmailEditText.setText(possibleEmail);
+                mEmailEditText.setKeyListener(null);
+            }
+        }
+        /////////////////////////////////////////////////////////
 
         if (!getIntent().getExtras().getBoolean(StartActivity.KEY_IS_GALLERY)) {
 
@@ -151,8 +170,7 @@ public class FormActivity extends Activity {
                 String latitude = data.getStringExtra(KEY_LATITUDE);
                 String longitude = data.getStringExtra(KEY_LONGITUDE);
                 Toast.makeText(getApplicationContext(), "Coordinates: " + latitude + " " + longitude, Toast.LENGTH_SHORT).show();
-                mLongitude = Double.parseDouble(getIntent().getExtras().getString(KEY_LONGITUDE));
-                mLatitude = Double.parseDouble(getIntent().getExtras().getString(KEY_LATITUDE));
+                mLongitude = Double.parseDouble(data.getExtras().getString(KEY_LONGITUDE));
 
             }
         }

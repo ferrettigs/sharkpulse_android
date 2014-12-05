@@ -69,8 +69,10 @@ public class AppController{
         mRecord = new Record();
         localDateFormat = new SimpleDateFormat("HH:mm:ss");
         mLocationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
+
         // check if location tracking is currently off
         is_GPS_on = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
     }
 
     public static AppController getInstance(Context context) {

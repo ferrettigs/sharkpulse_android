@@ -16,7 +16,7 @@
         android:orientation="vertical"
         android:layout_weight="1"
         android:gravity="center"
-        >
+        android:weightSum="1">
 
 
         <Button
@@ -31,7 +31,7 @@
             android:layout_gravity="center_horizontal"
             android:onClick="onClick"
             android:text="@string/camera"
-            />
+            android:layout_weight="0.21" />
 
 
         <Button
@@ -42,7 +42,8 @@
             android:layout_centerHorizontal="true"
             android:layout_gravity="center_horizontal"
             android:onClick="onClick"
-            android:text="@string/gallery" />
+            android:text="@string/gallery"
+            android:layout_weight="0.21" />
 
     </LinearLayout>
 
