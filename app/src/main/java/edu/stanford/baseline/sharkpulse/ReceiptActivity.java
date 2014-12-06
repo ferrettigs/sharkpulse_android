@@ -8,6 +8,7 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -43,7 +44,7 @@ public class ReceiptActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_receipt);
-        setUpMapIfNeeded();
+
         intent = getIntent();
         mButton = (Button) findViewById(R.id.coordinateButton);
         mContext = ReceiptActivity.this;
@@ -62,6 +63,7 @@ public class ReceiptActivity extends FragmentActivity {
         notes.setText(stringInfo.get(4));
         latitudeDouble = Double.parseDouble(stringInfo.get(2));
         longitudeDouble = Double.parseDouble(stringInfo.get(3));
+        setUpMapIfNeeded();
     }
 
     private void setUpMapIfNeeded() {
@@ -78,7 +80,9 @@ public class ReceiptActivity extends FragmentActivity {
     private void setUpMap() {
         // add pin to map
         mMap.getUiSettings().setScrollGesturesEnabled(false);
+
         position = mMap.addMarker(new MarkerOptions().position(new LatLng(latitudeDouble, longitudeDouble)).title("Hold and Drag to Move Me!"));
         position.showInfoWindow();
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(position.getPosition(), 7));
     }
 }
