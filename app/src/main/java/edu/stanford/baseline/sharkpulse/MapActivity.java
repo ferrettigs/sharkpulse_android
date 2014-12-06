@@ -42,14 +42,10 @@ public class MapActivity extends FragmentActivity implements GoogleMap.OnMarkerD
     }
 
     private void setUpMapIfNeeded() {
-        // Do a null check to confirm that we have not already instantiated the map.
         if (mMap == null) {
-            // Try to obtain the map from the SupportMapFragment.
             mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
                     .getMap();
-            mMap.setOnMarkerDragListener(this); // attach marker listener to map
-
-            // Check if we were successful in obtaining the map.
+            mMap.setOnMarkerDragListener(this);
             if (mMap != null) {
                 setUpMap();
             }

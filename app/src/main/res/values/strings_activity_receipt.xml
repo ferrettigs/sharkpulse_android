@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="receipt_title">Thank you for your submission. Here's a receipt of your sharkPulse!</string>
+    <string name="receipt_species">None</string>
+    <string name="receipt_email">None</string>
+    <string name="receipt_notes">None</string>
+    <string name="receipt_longitude">None</string>
+    <string name="receipt_latitude">None</string>
+</resources>

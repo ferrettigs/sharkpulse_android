@@ -6,6 +6,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.content.Intent;
 import android.os.Environment;
@@ -27,6 +28,7 @@ import org.apache.http.client.methods.HttpPost;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 /**
  * Created by Emanuel Mazzilli on 9/16/14.
@@ -37,7 +39,7 @@ public class AppController{
     private static final int MODE_POST_BASELINE = 1;
     private static final int MODE_POST_TESTSHARK = 2;
 
-    private static final int SEND_MODE = MODE_EMAIL;
+    private static final int SEND_MODE = MODE_POST_TESTSHARK;
 
     private static final String TESTSHARK_URL = "http://testshark.herokuapp.com/recoreds/create";
     private static final String BASELINE_URL = "http://baseline2.stanford.edu/uploadImage.php";
@@ -64,6 +66,8 @@ public class AppController{
 
     private SimpleDateFormat localDateFormat;
 
+    private ArrayList<String> stringRecords;
+
     private AppController(Context context) {
         mContext = context;
         mRecord = new Record();
@@ -72,6 +76,7 @@ public class AppController{
 
         // check if location tracking is currently off
         is_GPS_on = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        stringRecords = new ArrayList<String>(5);
 
     }
 
@@ -175,16 +180,43 @@ public class AppController{
     }
 
     protected void sendBaselinePost() {
-        postFile(mRecord, BASELINE_URL);
+        //new postSighting().execute(mRecord);
     }
 
     protected void sendTestsharkPost() {
-        postFile(mRecord, TEST_DEPLOYMENT);
+        new postSighting().execute(mRecord);
+
     }
 
-    private static void postFile(final Record record, final String url){
+    private class postSighting extends AsyncTask<Record, Void, Void>{
+
+        @Override
+        protected Void doInBackground(Record... records) {
+
+            int count = records.length;
+            for(int i = 0; i < count; i++){
+                postFile(records[i]);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            Log.v(LOG_TAG, "onPost. Initializing intent");
+            Intent intent = new Intent(mContext.getApplicationContext(), ReceiptActivity.class);
+            stringRecords.add(mRecord.mEmail);
+            stringRecords.add(mRecord.mGuessSpecies);
+            stringRecords.add(String.valueOf(mRecord.mLatitude));
+            stringRecords.add(String.valueOf(mRecord.mLongitude));
+            stringRecords.add(String.valueOf(mRecord.mNotes));
+            intent.putStringArrayListExtra("ArrayRecords", stringRecords);
+            mContext.startActivity(intent);
+        }
+    }
+
+    private static void postFile(final Record record){
         // create new file object from path
-        Log.v(LOG_TAG, url);
+        Log.v(LOG_TAG, TEST_DEPLOYMENT);
         final File sdDir = Environment.getExternalStorageDirectory();
         final File file = new File(record.mImagePath);
         final ResponseHandler<String> handler = new BasicResponseHandler();
@@ -199,7 +231,7 @@ public class AppController{
 
                 try{
                     // generate post request object
-                    HttpPost post = new HttpPost(url);
+                    HttpPost post = new HttpPost(TEST_DEPLOYMENT);
                     MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
                     multipartEntityBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
 
