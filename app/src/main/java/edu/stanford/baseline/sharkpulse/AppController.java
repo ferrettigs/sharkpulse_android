@@ -1,6 +1,5 @@
 package edu.stanford.baseline.sharkpulse;
 
-
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
@@ -11,6 +10,7 @@ import android.os.Bundle;
 import android.content.Intent;
 import android.os.Environment;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -24,7 +24,6 @@ import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.client.methods.HttpPost;
-
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -91,16 +90,6 @@ public class AppController{
         return mRecord;
     }
 
-    void setData(String species, String email, String notes, String imagePath) {
-        // Set instance variables of record
-        mRecord.mGuessSpecies = species;
-        mRecord.mEmail = email;
-        mRecord.mNotes = notes;
-        mRecord.mImagePath = imagePath;
-        mRecord.setCurrentDate();
-        mRecord.mTime = localDateFormat.format(mRecord.mDate);
-    }
-
     void setData(String species, String email, String notes, String imagePath, Double longitude, Double latitude) {
         mRecord.mGuessSpecies = species;
         mRecord.mEmail = email;
@@ -120,6 +109,8 @@ public class AppController{
             public void onLocationChanged(Location location) {
                 // set the record
                 mRecord.setCoordinates(location.getLatitude(), location.getLongitude());
+                //Toast.makeText(, "Longitude: " + Double.toString(mRecord.mLongitude) + " Latitude: " + Double.toString(mRecord.mLatitude), Toast.LENGTH_LONG).show();
+                //Log.v(LOG_TAG,  "Longitude: " + mRecord.mLongitude + " Latitude: " + mRecord.mLatitude);
 
                 // unregister the listener
                 stopGPS();

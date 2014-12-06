@@ -8,16 +8,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-// Ask Brayanne for S5` `q  dxax
 
 public class StartActivity extends Activity {
 
@@ -26,7 +20,6 @@ public class StartActivity extends Activity {
     public static final int MEDIA_TYPE_IMAGE = 1;
     public static final String KEY_IMAGE_PATH = "KEY_IMAGE_PATH";
     public static final String KEY_IS_GALLERY = "KEY_IS_GALLERY";
-    public static final String LOG_TAG = StartActivity.class.getSimpleName();
     protected Context mContext;
     private Uri fileUri;
 
@@ -36,31 +29,9 @@ public class StartActivity extends Activity {
         onOpenCamera();
         setContentView(R.layout.activity_start);
         mContext = getApplicationContext();
-
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.start, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     public void onOpenGallery() {
-        // start activity for results
-        // launch the intent
         Intent i = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(i, ACTION_GALLERY_SELECTED);
@@ -76,7 +47,6 @@ public class StartActivity extends Activity {
                     isGallery = true;
                     break;
                 case Activity.RESULT_CANCELED:
-
                     break;
                 default:
                     break;
@@ -84,32 +54,20 @@ public class StartActivity extends Activity {
         } else if (requestCode == 100) {
             switch (resultCode) {
                 case Activity.RESULT_OK:
-                    //Toast.makeText(this, "Image saved to:\n" +
-                       //     data.getData(), Toast.LENGTH_LONG).show();
                     try {
                         picturePath = getRealPathFromURI(mContext, fileUri);
 
                     }catch (NullPointerException e){
-                        if(fileUri == null){
-                            Log.v(LOG_TAG, " file Uri is null");
-                        }
-                        Log.v(LOG_TAG, "caught null");
-                        Log.v(LOG_TAG, "picture path: " + picturePath);
                         picturePath = getImageFromCamera();
-                        Log.v(LOG_TAG, fileUri.toString());
-                        Log.v(LOG_TAG, picturePath);
-
                     }
                     break;
                 case Activity.RESULT_CANCELED:
                     break;
-
                 default:
                     break;
             }
         }
         if (picturePath != null) {
-            Log.v(LOG_TAG, "Final path: " + picturePath);
             Intent intent = new Intent(this, FormActivity.class);
             intent.putExtra(KEY_IMAGE_PATH, picturePath);
             intent.putExtra(KEY_IS_GALLERY, isGallery);
@@ -131,7 +89,6 @@ public class StartActivity extends Activity {
     }
 
     public void onOpenCamera() {
-        // launch the intent
         final Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (i.resolveActivity(getPackageManager()) != null) {
             fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
@@ -171,12 +128,8 @@ public class StartActivity extends Activity {
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES), "SharkPulse");
 
-        //sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://"+ Environment.getExternalStorageDirectory())));
-
-
         if(!mediaStorageDir.exists()){
             if(! mediaStorageDir.mkdirs()){
-                Log.d(LOG_TAG, "failed to create directory");
                 return null;
             }
         }
@@ -191,7 +144,6 @@ public class StartActivity extends Activity {
             return null;
         }
 
-        Log.v(LOG_TAG, "Successfully created file!");
         return mediaFile;
     }
 
@@ -208,8 +160,6 @@ public class StartActivity extends Activity {
             result = cursor.getString(index);
             cursor.close();
         }
-        Log.v(LOG_TAG, "Result: " + result);
         return result;
-
     }
 }

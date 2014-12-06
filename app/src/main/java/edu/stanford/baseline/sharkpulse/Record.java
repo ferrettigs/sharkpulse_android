@@ -11,12 +11,10 @@ public class Record {
     protected String mEmail;
     protected String mGuessSpecies;
     protected String mNotes;
-
     protected double mLatitude;
     protected double mLongitude;
     protected Date mDate;
     protected String mTime;
-
     protected String mImagePath;
 
     public Record() {
