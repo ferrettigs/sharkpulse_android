@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -13,10 +12,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-
 
 /**
  * Created by Daniel Diaz on 10/25/14.
@@ -38,7 +35,6 @@ public class MapActivity extends FragmentActivity implements GoogleMap.OnMarkerD
         setUpMapIfNeeded();
         mButton = (Button) findViewById(R.id.coordinateButton);
         mContext = MapActivity.this;
-
     }
 
     private void setUpMapIfNeeded() {
@@ -65,16 +61,11 @@ public class MapActivity extends FragmentActivity implements GoogleMap.OnMarkerD
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.coordinateButton:
-               //Log.v(LOG_TAG, "Position of pin: " + getPosition().toString());
+
                 int length = getPosition().toString().length();
 
                 String coordinates = getPosition().toString().substring(10, length - 1);
-
-                Log.v(LOG_TAG, coordinates);
-
                 String[] latitude_longitude = coordinates.split(",");
-
-                Log.v(LOG_TAG, "Latitude: " + latitude_longitude[0] + " " + "Longitude: " + latitude_longitude[1]);
 
                showMapAlertDialog("Are you sure these are the coordinates?", "Confirm", "Cancel", latitude_longitude);
 
@@ -97,7 +88,6 @@ public class MapActivity extends FragmentActivity implements GoogleMap.OnMarkerD
 
     @Override
     public void onMarkerDrag(Marker marker) {
-        //mMap.moveCamera(CameraUpdateFactory.newLatLng(getPosition()));
         mMap.animateCamera(CameraUpdateFactory.newLatLng(getPosition()), new GoogleMap.CancelableCallback() {
             @Override
             public void onFinish() {
@@ -143,5 +133,4 @@ public class MapActivity extends FragmentActivity implements GoogleMap.OnMarkerD
         final AlertDialog alert = builder.create();
         alert.show();
     }
-
 }

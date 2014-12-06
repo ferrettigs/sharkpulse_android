@@ -7,13 +7,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.util.Patterns;
-
-import com.google.android.gms.ads.a;
-
 import java.util.regex.Pattern;
 
 /**
- * Created by Algernon on 11/10/14.
+ * Created by Daniel Diaz on 11/10/14.
  */
 public class Utility {
 
@@ -39,7 +36,6 @@ public class Utility {
                 });
         final AlertDialog alert = builder.create();
         alert.show();
-
     }
 
     public static double convertToDegree(String stringDMS, String stringPole){
@@ -70,7 +66,6 @@ public class Utility {
         return result;
     }
     public static String getPlayStoreEmail(Context context){
-        //////////////////getting identification////////////////
         mContext = context;
         Pattern emailPattern = Patterns.EMAIL_ADDRESS;
         Account[] accounts = AccountManager.get(mContext).getAccounts();
@@ -82,10 +77,5 @@ public class Utility {
             }
         }
         return null;
-        /////////////////////////////////////////////////////////
     }
-
-
-
-
 }
