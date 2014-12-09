@@ -55,7 +55,6 @@ public class FormActivity extends Activity {
             mImageView.setImageBitmap(resizedBitmap);
         }
 
-        //create new record and set image path
         mImagePath = getIntent().getExtras().getString(StartActivity.KEY_IMAGE_PATH);
 
         if (!getIntent().getExtras().getBoolean(StartActivity.KEY_IS_GALLERY)) {
@@ -102,14 +101,17 @@ public class FormActivity extends Activity {
             mEmail = ((EditText) findViewById(R.id.email_field)).getText().toString();
             mNotes = ((EditText) findViewById(R.id.notes_field)).getText().toString();
 
+            // if picture is from camera and Android could not determine coordinates, we launch the map to drop pin
             if (!mController.is_GPS_on && !getIntent().getExtras().getBoolean(StartActivity.KEY_IS_GALLERY)) {
                 Intent mapIntent = new Intent(this, MapActivity.class);
                 startActivityForResult(mapIntent, ACTION_MAP);
             }
+            // else if no exif data was found on the picture from the gallery
             else if(ExifDataNotFound){
                 Intent mapIntent = new Intent(this, MapActivity.class);
                 startActivityForResult(mapIntent, ACTION_MAP);
             }
+            // else, we have all the data we need and we can send the record
             else{
                 mController.setData(mGuessSpecies, mEmail, mNotes, mImagePath, mRecord.mLongitude, mRecord.mLatitude);
                 mController.sendData();

@@ -10,7 +10,7 @@ import android.util.Patterns;
 import java.util.regex.Pattern;
 
 /**
- * Created by Daniel Diaz on 11/10/14.
+ * Created by Brian De Anda and Daniel Diaz on 11/10/14.
  */
 public class Utility {
 
@@ -72,8 +72,6 @@ public class Utility {
         for (Account account : accounts) {
             if (emailPattern.matcher(account.name).matches()) {
                 return account.name;
-
-
             }
         }
         return null;

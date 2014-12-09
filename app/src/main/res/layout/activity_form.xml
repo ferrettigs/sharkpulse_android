@@ -39,7 +39,7 @@
                 android:inputType="text"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:textColor="#fff4f4f4" />
+                android:textColor="#88898c" />
 
             <AutoCompleteTextView
                 android:id="@+id/email_field"
@@ -49,7 +49,7 @@
                 android:inputType="textEmailAddress"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:textColor="#fff4f4f4" />
+                android:textColor="#88898c" />
 
             <EditText
                 android:id="@+id/notes_field"
@@ -64,7 +64,7 @@
                 android:inputType="textMultiLine"
                 android:isScrollContainer="true"
                 android:lines="2"
-                android:textColor="#fff4f4f4" />
+                android:textColor="#88898c" />
 
             <Button
                 android:id="@+id/button_send"
@@ -75,7 +75,7 @@
                 android:onClick="onClick"
                 android:text="@string/action_send"
                 android:textStyle="bold"
-                android:textColor="#ffdcdbdc"
+                android:textColor="#88898c"
                 android:textSize="20dp" />
 
         </LinearLayout>

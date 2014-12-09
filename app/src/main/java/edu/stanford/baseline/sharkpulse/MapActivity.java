@@ -16,7 +16,7 @@ import android.view.View;
 import android.widget.Button;
 
 /**
- * Created by Daniel Diaz on 10/25/14.
+ * Created by Brian De Anda and Daniel Diaz on 10/25/14.
  */
 public class MapActivity extends FragmentActivity implements GoogleMap.OnMarkerDragListener {
     private GoogleMap mMap = null;
