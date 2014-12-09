@@ -15,38 +15,4 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         tools:layout="@layout/activity_receipt"
         />
-
-    <TextView
-        android:id="@+id/email_textview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:text="@string/receipt_email"/>
-    <TextView
-        android:id="@+id/species_textview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:text="@string/receipt_species"/>
-    <TextView
-        android:id="@+id/latitude_textview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:text="@string/receipt_latitude"/>
-    <TextView
-        android:id="@+id/longitude_textview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:text="@string/receipt_longitude"/>
-    <TextView
-        android:id="@+id/notes_textview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:text="@string/receipt_notes"/>
-
-
-
 </LinearLayout>

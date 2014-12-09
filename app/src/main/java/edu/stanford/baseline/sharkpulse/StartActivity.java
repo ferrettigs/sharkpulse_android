@@ -20,15 +20,25 @@ public class StartActivity extends Activity {
     public static final int MEDIA_TYPE_IMAGE = 1;
     public static final String KEY_IMAGE_PATH = "KEY_IMAGE_PATH";
     public static final String KEY_IS_GALLERY = "KEY_IS_GALLERY";
+    private static boolean openCamera = true;
     protected Context mContext;
     private Uri fileUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        onOpenCamera();
+        if(openCamera) {
+            onOpenCamera();
+        }
         setContentView(R.layout.activity_start);
         mContext = getApplicationContext();
+    }
+
+    protected void onDestroy() {
+        super.onDestroy();
+        if (isFinishing()) {
+            openCamera = false;
+        }
     }
 
     public void onOpenGallery() {

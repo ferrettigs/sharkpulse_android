@@ -7,47 +7,46 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".StartActivity">
+    tools:context=".StartActivity"
+    android:background="#ff000000">
 
 
-    <LinearLayout
+    <ImageView
         android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:orientation="vertical"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:weightSum="1">
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.21"
+        android:src="@drawable/shark_pulse" />
 
+    <Button
+        android:id="@+id/buttonGallery"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/linearLayout"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
+        android:onClick="onClick"
+        android:text="@string/gallery"
+        android:layout_weight="0.21"
+        android:textSize="30dp"
+        android:textColor="#ffdcdbdc" />
 
-        <Button
-            android:id="@+id/buttonTakePicture"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignEnd="@+id/linearLayout"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_alignRight="@+id/linearLayout"
-            android:layout_gravity="center_horizontal"
-            android:onClick="onClick"
-            android:text="@string/camera"
-            android:layout_weight="0.21" />
-
-
-        <Button
-            android:id="@+id/buttonGallery"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/linearLayout"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="center_horizontal"
-            android:onClick="onClick"
-            android:text="@string/gallery"
-            android:layout_weight="0.21" />
-
-    </LinearLayout>
-
-
+    <Button
+        android:id="@+id/buttonTakePicture"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/linearLayout"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignRight="@+id/linearLayout"
+        android:layout_gravity="center_horizontal"
+        android:onClick="onClick"
+        android:text="@string/camera"
+        android:layout_weight="0.21"
+        android:textSize="30dp"
+        android:textColor="#ffdcdbdc" />
 
 
 </LinearLayout>

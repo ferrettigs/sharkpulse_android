@@ -124,7 +124,7 @@ public class FormActivity extends Activity {
                 mLatitude = Double.parseDouble(data.getExtras().getString(KEY_LATITUDE));
                 mLongitude = Double.parseDouble(data.getExtras().getString(KEY_LONGITUDE));
                 mController.setData(mGuessSpecies, mEmail, mNotes, mImagePath, mLongitude, mLatitude);
-                mController.sendData();
+               mController.sendData();
             }
         }
     }

@@ -200,6 +200,7 @@ public class AppController{
             stringRecords.add(String.valueOf(mRecord.mLatitude));
             stringRecords.add(String.valueOf(mRecord.mLongitude));
             stringRecords.add(String.valueOf(mRecord.mNotes));
+            stringRecords.add(mRecord.mImagePath);
             intent.putStringArrayListExtra("ArrayRecords", stringRecords);
             mContext.startActivity(intent);
         }
@@ -220,6 +221,7 @@ public class AppController{
                 HttpClient client = new DefaultHttpClient();
                 HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
 
+                /*
                 try{
                     // generate post request object
                     HttpPost post = new HttpPost(TEST_DEPLOYMENT);
@@ -268,6 +270,7 @@ public class AppController{
                 } catch (IOException e){
                     Log.v(LOG_TAG, "Fatal transport error: " + e.getMessage());
                 }
+                */
             }
         };
         thread.start();

@@ -6,7 +6,8 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="edu.stanford.baseline.sharkpulse.FormActivity">
+    tools:context="edu.stanford.baseline.sharkpulse.FormActivity"
+    android:background="#ff000000">
 
     <ScrollView
         android:id="@+id/form_scroll"
@@ -26,8 +27,6 @@
                 android:id="@+id/imageView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
                 android:adjustViewBounds="true"
                 android:maxHeight="300dp"
                 android:src="@drawable/ic_launcher" />
@@ -39,7 +38,8 @@
                 android:hint="@string/prompt_species_long"
                 android:inputType="text"
                 android:maxLines="1"
-                android:singleLine="true" />
+                android:singleLine="true"
+                android:textColor="#fff4f4f4" />
 
             <AutoCompleteTextView
                 android:id="@+id/email_field"
@@ -48,7 +48,8 @@
                 android:hint="@string/prompt_email"
                 android:inputType="textEmailAddress"
                 android:maxLines="1"
-                android:singleLine="true" />
+                android:singleLine="true"
+                android:textColor="#fff4f4f4" />
 
             <EditText
                 android:id="@+id/notes_field"
@@ -62,7 +63,8 @@
                 android:hint="@string/prompt_notes"
                 android:inputType="textMultiLine"
                 android:isScrollContainer="true"
-                android:lines="2" />
+                android:lines="2"
+                android:textColor="#fff4f4f4" />
 
             <Button
                 android:id="@+id/button_send"
@@ -72,7 +74,9 @@
                 android:layout_marginTop="16dp"
                 android:onClick="onClick"
                 android:text="@string/action_send"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:textColor="#ffdcdbdc"
+                android:textSize="20dp" />
 
         </LinearLayout>
     </ScrollView>

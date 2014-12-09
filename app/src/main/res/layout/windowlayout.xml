@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Thank You for your Contribution!"
+        android:id="@+id/textView4"
+        android:textSize="15dp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/imageView"
+            android:src="@drawable/ic_launcher"
+            android:layout_weight="1"
+            android:scaleType="fitXY"/>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/email_banner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/receipt_email_banner"
+                android:textStyle="bold"
+                android:textSize="12dp" />
+            <TextView
+                android:id="@+id/email_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/receipt_email"
+                android:textSize="12dp" />
+
+            <TextView
+                android:id="@+id/species_banner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/receipt_species_banner"
+                android:textStyle="bold"
+                android:textSize="12dp" />
+            <TextView
+                android:id="@+id/species_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/receipt_species"
+                android:textSize="12dp" />
+            <TextView
+                android:id="@+id/latitude_banner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/receipt_latitude_banner"
+                android:textStyle="bold"
+                android:textSize="12dp" />
+            <TextView
+                android:id="@+id/latitude_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/receipt_latitude"
+                android:textSize="12dp" />
+            <TextView
+                android:id="@+id/longitude_banner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/receipt_longitude_banner"
+                android:textStyle="bold"
+                android:textSize="12dp" />
+
+            <TextView
+                android:id="@+id/longitude_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/receipt_longitude"
+                android:textSize="12dp" />
+            <TextView
+                android:id="@+id/notes_banner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/receipt_notes_banner"
+                android:textStyle="bold"
+                android:textSize="12dp" />
+            <TextView
+                android:id="@+id/notes_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/receipt_notes"
+                android:textSize="12dp" />
+
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
