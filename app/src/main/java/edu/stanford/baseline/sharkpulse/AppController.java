@@ -171,7 +171,7 @@ public class AppController{
     }
 
     protected void sendBaselinePost() {
-        //new postSighting().execute(mRecord);
+       new postSighting().execute(mRecord);
     }
 
     protected void sendTestsharkPost() {
