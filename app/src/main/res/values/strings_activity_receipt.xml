@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="receipt_title">Thank you for your submission. Here\'s a receipt of your sharkPulse!</string>
-    <string name="receipt_species">None</string>
+    <string name="receipt_species">Not Available</string>
     <string name="receipt_email">None</string>
     <string name="receipt_notes">None</string>
     <string name="receipt_longitude">None</string>
     <string name="receipt_latitude">None</string>
+
+    <string name="receipt_species_banner">Species:</string>
+    <string name="receipt_email_banner">Email:</string>
+    <string name="receipt_notes_banner">Notes:</string>
+    <string name="receipt_longitude_banner">Longitude:</string>
+    <string name="receipt_latitude_banner">Latitude:</string>
 </resources>
