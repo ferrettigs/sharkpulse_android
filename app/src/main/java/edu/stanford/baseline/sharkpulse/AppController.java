@@ -220,7 +220,6 @@ public class AppController{
                 // create client and connection timeout
                 HttpClient client = new DefaultHttpClient();
                 HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
-
                 /*
                 try{
                     // generate post request object

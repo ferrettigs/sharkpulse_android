@@ -20,7 +20,6 @@ public class Record {
     public Record() {
 
     }
-
     public Record(String mEmail, String mGuessSpecies, String mNotes) {
         this.mEmail = mEmail;
         this.mGuessSpecies = mGuessSpecies;

@@ -27,7 +27,6 @@ public class MapActivity extends FragmentActivity implements GoogleMap.OnMarkerD
     public static final String KEY_LONGITUDE = "KEY_LONGITUDE";
 
     private final String LOG_TAG = MapActivity.class.getSimpleName();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -37,7 +37,6 @@ public class Utility {
         final AlertDialog alert = builder.create();
         alert.show();
     }
-
     public static double convertToDegree(String stringDMS, String stringPole){
         double result = 0;
 

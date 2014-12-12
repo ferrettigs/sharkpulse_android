@@ -39,7 +39,6 @@ public class StartActivity extends Activity {
             openCamera = false;
         }
     }
-
     public void onOpenGallery() {
         Intent i = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
