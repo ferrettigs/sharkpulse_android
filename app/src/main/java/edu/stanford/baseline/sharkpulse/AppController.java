@@ -38,10 +38,10 @@ public class AppController{
     private static final int MODE_POST_BASELINE = 1;
     private static final int MODE_POST_TESTSHARK = 2;
 
-    private static final int SEND_MODE = MODE_POST_TESTSHARK;
+    private static final int SEND_MODE = MODE_POST_BASELINE;
 
     private static final String TESTSHARK_URL = "http://testshark.herokuapp.com/recoreds/create";
-    private static final String BASELINE_URL = "http://baseline2.stanford.edu/uploadImage.php";
+    private static final String BASELINE_URL = "http://baseline2.stanford.edu/testdistro/mobileUpload.php";
     private static final String TEST_DEPLOYMENT = "http://54.67.32.82/EmailphpSharkPulse/mobileUpload.php";
     private static final String BASELINE_EMAIL_ADDRESS = "sharkbaselines@gmail.com";
     private static final String PHOTOGRAPH = "PHOTOGRAPH";
@@ -220,11 +220,11 @@ public class AppController{
                 /**
                  * NOTE: Method to post works. Waiting for production server endpoint before publishing
                  */
-                /*
+
                 if (file.exists()) {
                     try {
                         // generate post request object
-                        HttpPost post = new HttpPost(TEST_DEPLOYMENT);
+                        HttpPost post = new HttpPost(BASELINE_URL);
                         MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
                         multipartEntityBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
 
@@ -266,7 +266,7 @@ public class AppController{
                     }
 
                 }
-                */
+
             }
         };
         thread.start();
