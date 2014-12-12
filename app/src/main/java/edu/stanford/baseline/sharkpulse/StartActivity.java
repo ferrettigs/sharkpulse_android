@@ -33,7 +33,6 @@ public class StartActivity extends Activity {
         setContentView(R.layout.activity_start);
         mContext = getApplicationContext();
     }
-
     protected void onDestroy() {
         super.onDestroy();
         if (isFinishing()) {
