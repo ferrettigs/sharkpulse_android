@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -22,7 +21,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.ArrayList;
 /**
- * Created by Daniel Diaz on 12/5/14.
+ * Created by Brian De Anda and Daniel Diaz on 12/5/14.
  */
 public class ReceiptActivity extends FragmentActivity {
     private GoogleMap mMap = null;
@@ -52,7 +51,6 @@ public class ReceiptActivity extends FragmentActivity {
         intent = getIntent();
         mButton = (Button) findViewById(R.id.coordinateButton);
         mContext = ReceiptActivity.this;
-        Log.v(LOG_TAG, "On Receipt Activity");
         stringInfo = new ArrayList<String>(5);
         stringInfo = intent.getStringArrayListExtra("ArrayRecords");
 
@@ -98,6 +96,8 @@ public class ReceiptActivity extends FragmentActivity {
                 image = (ImageView) v.findViewById(R.id.imageView);
 
                 email.setText(stringInfo.get(0));
+
+                // edge cases of no info given on form
                 if (!stringInfo.get(1).equals("")){
                     species.setText(stringInfo.get(1));
                 }

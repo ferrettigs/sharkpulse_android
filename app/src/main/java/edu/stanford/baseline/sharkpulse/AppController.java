@@ -10,8 +10,6 @@ import android.os.Bundle;
 import android.content.Intent;
 import android.os.Environment;
 import android.util.Log;
-import android.widget.Toast;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -38,10 +36,10 @@ public class AppController{
     private static final int MODE_POST_BASELINE = 1;
     private static final int MODE_POST_TESTSHARK = 2;
 
-    private static final int SEND_MODE = MODE_POST_TESTSHARK;
+    private static final int SEND_MODE = MODE_POST_BASELINE;
 
     private static final String TESTSHARK_URL = "http://testshark.herokuapp.com/recoreds/create";
-    private static final String BASELINE_URL = "http://baseline2.stanford.edu/uploadImage.php";
+    private static final String BASELINE_URL = "http://baseline2.stanford.edu/testdistro/mobileUpload.php";
     private static final String TEST_DEPLOYMENT = "http://54.67.32.82/EmailphpSharkPulse/mobileUpload.php";
     private static final String BASELINE_EMAIL_ADDRESS = "sharkbaselines@gmail.com";
     private static final String PHOTOGRAPH = "PHOTOGRAPH";
@@ -107,10 +105,7 @@ public class AppController{
         mLocationListener = new LocationListener() {
 
             public void onLocationChanged(Location location) {
-                // set the record
                 mRecord.setCoordinates(location.getLatitude(), location.getLongitude());
-                //Toast.makeText(, "Longitude: " + Double.toString(mRecord.mLongitude) + " Latitude: " + Double.toString(mRecord.mLatitude), Toast.LENGTH_LONG).show();
-                //Log.v(LOG_TAG,  "Longitude: " + mRecord.mLongitude + " Latitude: " + mRecord.mLatitude);
 
                 // unregister the listener
                 stopGPS();
@@ -118,7 +113,7 @@ public class AppController{
 
             @Override
             public void onStatusChanged(String provider, int status, Bundle extras) {
-                // todo check gps unavailable
+
             }
 
             @Override
@@ -171,7 +166,7 @@ public class AppController{
     }
 
     protected void sendBaselinePost() {
-        //new postSighting().execute(mRecord);
+       new postSighting().execute(mRecord);
     }
 
     protected void sendTestsharkPost() {
@@ -193,7 +188,6 @@ public class AppController{
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            Log.v(LOG_TAG, "onPost. Initializing intent");
             Intent intent = new Intent(mContext.getApplicationContext(), ReceiptActivity.class);
             stringRecords.add(mRecord.mEmail);
             stringRecords.add(mRecord.mGuessSpecies);
@@ -216,60 +210,60 @@ public class AppController{
         // create thread to POST
         final Thread thread =  new Thread() {
 
-            public void run(){
+            public void run() {
                 // create client and connection timeout
                 HttpClient client = new DefaultHttpClient();
                 HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
-                /*
-                try{
-                    // generate post request object
-                    HttpPost post = new HttpPost(TEST_DEPLOYMENT);
-                    MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
-                    multipartEntityBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-                    // attach record to POST request
-                    if(file.exists()){
+                /**
+                 * NOTE: Method to post works. Waiting for production server endpoint before publishing
+                 */
+
+                if (file.exists()) {
+                    try {
+                        // generate post request object
+                        HttpPost post = new HttpPost(BASELINE_URL);
+                        MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
+                        multipartEntityBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+
                         Log.v(LOG_TAG, "File exists!");
                         multipartEntityBuilder.addPart(PHOTOGRAPH, new FileBody(file));
+                        Log.v(LOG_TAG, String.valueOf(record.mDate));
+                        Log.v(LOG_TAG, record.mTime);
+                        Log.v(LOG_TAG, String.valueOf(record.mLatitude));
+                        Log.v(LOG_TAG, String.valueOf(record.mLongitude));
+                        Log.v(LOG_TAG, record.mEmail);
+                        Log.v(LOG_TAG, record.mGuessSpecies);
+                        Log.v(LOG_TAG, record.mNotes);
+                        Log.v(LOG_TAG, record.mImagePath);
+
+                        // place record in json
+                        multipartEntityBuilder.addTextBody(DATE, String.valueOf(record.mDate));
+                        multipartEntityBuilder.addTextBody(TIME, record.mTime);
+                        multipartEntityBuilder.addTextBody(LATITUDE, String.valueOf(record.mLatitude));
+                        multipartEntityBuilder.addTextBody(LONGITUDE, String.valueOf(record.mLongitude));
+                        multipartEntityBuilder.addTextBody(EMAIL, record.mEmail);
+                        multipartEntityBuilder.addTextBody(SPECIES, record.mGuessSpecies);
+                        multipartEntityBuilder.addTextBody(NOTES, record.mNotes);
+
+                        HttpEntity entity = multipartEntityBuilder.build();
+                        post.setEntity(entity);
+
+                        HttpResponse response = client.execute(post);
+                        String body = handler.handleResponse(response);
+                        Log.v(LOG_TAG, "Works!");
+                        Log.v(LOG_TAG, body);
+
+
+                    } catch (ClientProtocolException e) {
+                        Log.v(LOG_TAG, "Fatal protocol exception: " + e.getMessage());
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        Log.v(LOG_TAG, "Fatal transport error: " + e.getMessage());
                     }
-                    else{
-                        Log.v(LOG_TAG, "File does not exist");
-                    }
 
-                    Log.v(LOG_TAG, String.valueOf(record.mDate));
-                    Log.v(LOG_TAG, record.mTime);
-                    Log.v(LOG_TAG, String.valueOf(record.mLatitude));
-                    Log.v(LOG_TAG, String.valueOf(record.mLongitude));
-                    Log.v(LOG_TAG, record.mEmail);
-                    Log.v(LOG_TAG, record.mGuessSpecies);
-                    Log.v(LOG_TAG, record.mNotes);
-                    Log.v(LOG_TAG, record.mImagePath);
-
-                    // place record in json
-                    multipartEntityBuilder.addTextBody(DATE, String.valueOf(record.mDate));
-                    multipartEntityBuilder.addTextBody(TIME, record.mTime);
-                    multipartEntityBuilder.addTextBody(LATITUDE, String.valueOf(record.mLatitude));
-                    multipartEntityBuilder.addTextBody(LONGITUDE, String.valueOf(record.mLongitude));
-                    multipartEntityBuilder.addTextBody(EMAIL, record.mEmail);
-                    multipartEntityBuilder.addTextBody(SPECIES, record.mGuessSpecies);
-                    multipartEntityBuilder.addTextBody(NOTES, record.mNotes);
-
-                    HttpEntity entity = multipartEntityBuilder.build();
-                    post.setEntity(entity);
-
-                    HttpResponse response = client.execute(post);
-                    String body  = handler.handleResponse(response);
-                    Log.v(LOG_TAG, "Works!");
-                    Log.v(LOG_TAG, body);
-
-
-                } catch (ClientProtocolException e){
-                    Log.v(LOG_TAG, "Fatal protocol exception: " + e.getMessage());
-                    e.printStackTrace();
-                } catch (IOException e){
-                    Log.v(LOG_TAG, "Fatal transport error: " + e.getMessage());
                 }
-                */
+
             }
         };
         thread.start();
