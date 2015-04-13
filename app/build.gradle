@@ -5,20 +5,26 @@ android {
     buildToolsVersion "19.1.0"
 
     defaultConfig {
-        applicationId "edu.stanford.baseline.sharkpulse"
+        applicationId "edu.stanford.baseline.sharkpulse2"
         minSdkVersion 10
         targetSdkVersion 19
-        versionCode 2
-        versionName "2.0"
+        versionCode 3
+        versionName "3.0"
     }
 
     buildTypes {
         release {
-            runProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
+    signingConfigs {
+        release {
+            storeFile file("release.jks")
+            storePassword "Sharkpulse"
+            keyAlias "Sharkpulse"
+            keyPassword "Sharkpulse"
+        }
+    }
      packagingOptions {
             exclude 'META-INF/DEPENDENCIES'
             exclude 'META-INF/NOTICE'

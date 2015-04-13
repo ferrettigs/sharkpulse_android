@@ -1,4 +1,4 @@
-package edu.stanford.baseline.sharkpulse;
+package edu.stanford.baseline.sharkpulse2;
 
 import android.content.Context;
 import android.content.Intent;
@@ -23,7 +23,7 @@ import java.util.ArrayList;
 /**
  * Created by Brian De Anda and Daniel Diaz on 12/5/14.
  */
-public class ReceiptActivity extends FragmentActivity {
+public class    ReceiptActivity extends FragmentActivity {
     private GoogleMap mMap = null;
     private Button mButton = null;
     private Marker position = null;

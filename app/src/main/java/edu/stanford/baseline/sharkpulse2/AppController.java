@@ -1,4 +1,4 @@
-package edu.stanford.baseline.sharkpulse;
+package edu.stanford.baseline.sharkpulse2;
 
 import android.content.Context;
 import android.location.Location;
@@ -39,7 +39,8 @@ public class AppController{
     private static final int SEND_MODE = MODE_POST_BASELINE;
 
     private static final String TESTSHARK_URL = "http://testshark.herokuapp.com/recoreds/create";
-    private static final String BASELINE_URL = "http://baseline2.stanford.edu/testdistro/mobileUpload.php";
+    private static final String TEST_BASELINE_URL = "http://baseline2.stanford.edu/testdistro/mobileUpload.php";
+    private static final String BASELINE_URL = "http://baseline2.stanford.edu/mobileUpload.php";
     private static final String TEST_DEPLOYMENT = "http://54.67.32.82/EmailphpSharkPulse/mobileUpload.php";
     private static final String BASELINE_EMAIL_ADDRESS = "sharkbaselines@gmail.com";
     private static final String PHOTOGRAPH = "PHOTOGRAPH";

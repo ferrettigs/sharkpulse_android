@@ -1,4 +1,4 @@
-package edu.stanford.baseline.sharkpulse;
+package edu.stanford.baseline.sharkpulse2;
 
 import java.util.Date;
 

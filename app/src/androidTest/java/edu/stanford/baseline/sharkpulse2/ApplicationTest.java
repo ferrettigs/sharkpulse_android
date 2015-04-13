@@ -1,4 +1,4 @@
-package edu.stanford.baseline.sharkpulse;
+package edu.stanford.baseline.sharkpulse2;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
