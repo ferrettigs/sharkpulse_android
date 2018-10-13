@@ -1,15 +1,16 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 19
-    buildToolsVersion "19.1.0"
+    compileSdkVersion 28
+    buildToolsVersion "28.0.2"
 
     defaultConfig {
         applicationId "edu.stanford.baseline.sharkpulse2"
-        minSdkVersion 10
-        targetSdkVersion 19
-        versionCode 3
-        versionName "3.0"
+        minSdkVersion 21
+        targetSdkVersion 28
+        versionCode 4
+        versionName "4.0"
+        multiDexEnabled true
     }
 
     buildTypes {
@@ -29,14 +30,21 @@ android {
             exclude 'META-INF/DEPENDENCIES'
             exclude 'META-INF/NOTICE'
             exclude 'META-INF/LICENSE'
+            exclude 'META-INF/INDEX.LIST'
+            exclude 'project.properties'
+            exclude 'org/apache/http/version.properties'
+            exclude 'org/apache/http/client/version.properties'
      }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:support-v4:19.1.0'
-    compile 'com.google.android.gms:play-services:4.4.52'
-    compile 'com.android.support:appcompat-v7:19.1.0'
-    androidTestCompile 'com.jayway.android.robotium:robotium-solo:5.2.1'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:support-compat:28.0.0'
+    implementation 'com.google.android.gms:play-services-maps:16.0.0'
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support:multidex:1.0.3'
+    implementation 'com.squareup.okhttp3:okhttp:3.11.0'
+
+    androidTestImplementation 'com.jayway.android.robotium:robotium-solo:5.2.1'
 
 }
