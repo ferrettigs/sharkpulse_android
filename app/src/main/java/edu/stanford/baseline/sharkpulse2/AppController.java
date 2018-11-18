@@ -1,6 +1,11 @@
 package edu.stanford.baseline.sharkpulse2;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -9,7 +14,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.content.Intent;
 import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -17,11 +25,14 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.client.methods.HttpPost;
+
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -30,7 +41,7 @@ import java.util.ArrayList;
 /**
  * Created by Emanuel Mazzilli on 9/16/14.
  */
-public class AppController{
+public class AppController {
 
     private static final int MODE_EMAIL = 0;
     private static final int MODE_POST_BASELINE = 1;
@@ -52,6 +63,7 @@ public class AppController{
     private static final String TIME = "TIME";
     private static final String SPECIES = "SPECIES";
     private static final String LOG_TAG = AppController.class.getSimpleName();
+    public static final String KEY_RECORD = "key_record";
 
     private static AppController sInstance;
 
@@ -85,22 +97,30 @@ public class AppController{
         return sInstance;
     }
 
-    public Record getRecord(){
+    public Record getRecord() {
         return mRecord;
     }
 
-    void setData(String species, String email, String notes, String imagePath, Double longitude, Double latitude) {
+    void setData(String species, String email, String notes, Bitmap bitmap, Double longitude, Double latitude) {
         mRecord.mGuessSpecies = species;
         mRecord.mEmail = email;
         mRecord.mNotes = notes;
-        mRecord.mImagePath = imagePath;
+        mRecord.mBitmap = bitmap;
         mRecord.mLongitude = longitude;
         mRecord.mLatitude = latitude;
         mRecord.setCurrentDate();
         mRecord.mTime = localDateFormat.format(mRecord.mDate);
     }
 
-    void startGPS() {
+    void setBitmap(Bitmap bitmap) {
+        mRecord.mBitmap = bitmap;
+    }
+
+    public Bitmap getBitmap() {
+        return mRecord.mBitmap;
+    }
+
+    void startGPS(Activity activity) {
 
         // Define a listener that responds to location updates
         mLocationListener = new LocationListener() {
@@ -128,8 +148,27 @@ public class AppController{
         };
 
         // Register the listener with the Location Manager to receive location updates
-        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,0,0,
-                mLocationListener);
+        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // Permission is not granted
+            if (ActivityCompat.shouldShowRequestPermissionRationale(activity,
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+            } else {
+                // No explanation needed, we can request the permission.
+                final String [] permissions = {Manifest.permission.ACCESS_FINE_LOCATION};
+                ActivityCompat.requestPermissions(activity, permissions, 10);
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        } else {
+            // Permission has already been granted
+            mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0,
+                    mLocationListener);
+        }
     }
 
     protected void stopGPS() {
@@ -162,7 +201,7 @@ public class AppController{
                                    + mRecord.mGuessSpecies + "\nNotes: "
                                    + mRecord.mNotes) ;
 
-        emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(mRecord.mImagePath));
+        emailIntent.putExtra(Intent.EXTRA_STREAM, mRecord.mBitmap);
         mContext.startActivity(emailIntent);
     }
 
@@ -190,22 +229,13 @@ public class AppController{
         @Override
         protected void onPostExecute(Void aVoid) {
             Intent intent = new Intent(mContext.getApplicationContext(), ReceiptActivity.class);
-            stringRecords.add(mRecord.mEmail);
-            stringRecords.add(mRecord.mGuessSpecies);
-            stringRecords.add(String.valueOf(mRecord.mLatitude));
-            stringRecords.add(String.valueOf(mRecord.mLongitude));
-            stringRecords.add(String.valueOf(mRecord.mNotes));
-            stringRecords.add(mRecord.mImagePath);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.putStringArrayListExtra("ArrayRecords", stringRecords);
             mContext.startActivity(intent);
         }
     }
 
     private static void postFile(final Record record){
-        // create new file object from path
-        Log.v(LOG_TAG, TEST_DEPLOYMENT);
-        final File sdDir = Environment.getExternalStorageDirectory();
-        final File file = new File(record.mImagePath);
         final ResponseHandler<String> handler = new BasicResponseHandler();
 
         // create thread to POST
@@ -219,50 +249,43 @@ public class AppController{
                 /**
                  * NOTE: Method to post works. Waiting for production server endpoint before publishing
                  */
+                try {
 
-                if (file.exists()) {
-                    try {
-                        // generate post request object
-                        HttpPost post = new HttpPost(BASELINE_URL);
-                        MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
-                        multipartEntityBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+                    // generate post request object
+                    HttpPost post = new HttpPost(BASELINE_URL);
+                    MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
+                    multipartEntityBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-                        Log.v(LOG_TAG, "File exists!");
-                        multipartEntityBuilder.addPart(PHOTOGRAPH, new FileBody(file));
-                        Log.v(LOG_TAG, String.valueOf(record.mDate));
-                        Log.v(LOG_TAG, record.mTime);
-                        Log.v(LOG_TAG, String.valueOf(record.mLatitude));
-                        Log.v(LOG_TAG, String.valueOf(record.mLongitude));
-                        Log.v(LOG_TAG, record.mEmail);
-                        Log.v(LOG_TAG, record.mGuessSpecies);
-                        Log.v(LOG_TAG, record.mNotes);
-                        Log.v(LOG_TAG, record.mImagePath);
+                    Log.v(LOG_TAG, "File exists!");
 
-                        // place record in json
-                        multipartEntityBuilder.addTextBody(DATE, String.valueOf(record.mDate));
-                        multipartEntityBuilder.addTextBody(TIME, record.mTime);
-                        multipartEntityBuilder.addTextBody(LATITUDE, String.valueOf(record.mLatitude));
-                        multipartEntityBuilder.addTextBody(LONGITUDE, String.valueOf(record.mLongitude));
-                        multipartEntityBuilder.addTextBody(EMAIL, record.mEmail);
-                        multipartEntityBuilder.addTextBody(SPECIES, record.mGuessSpecies);
-                        multipartEntityBuilder.addTextBody(NOTES, record.mNotes);
+                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                    record.mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+                    byte [] data = bos.toByteArray();
+                    multipartEntityBuilder.addPart("uplod_img", new ByteArrayBody(data,"image/jpeg", "test2.jpg"));
 
-                        HttpEntity entity = multipartEntityBuilder.build();
-                        post.setEntity(entity);
+                    // place record in json
+                    multipartEntityBuilder.addTextBody(DATE, String.valueOf(record.mDate));
+                    multipartEntityBuilder.addTextBody(TIME, record.mTime);
+                    multipartEntityBuilder.addTextBody(LATITUDE, String.valueOf(record.mLatitude));
+                    multipartEntityBuilder.addTextBody(LONGITUDE, String.valueOf(record.mLongitude));
+                    multipartEntityBuilder.addTextBody(EMAIL, record.mEmail);
+                    multipartEntityBuilder.addTextBody(SPECIES, record.mGuessSpecies);
+                    multipartEntityBuilder.addTextBody(NOTES, record.mNotes);
 
-                        HttpResponse response = client.execute(post);
-                        String body = handler.handleResponse(response);
-                        Log.v(LOG_TAG, "Works!");
-                        Log.v(LOG_TAG, body);
+                    HttpEntity entity = multipartEntityBuilder.build();
+                    post.setEntity(entity);
+
+                    HttpResponse response = client.execute(post);
+                    String body = handler.handleResponse(response);
+                    Log.v(LOG_TAG, "Works!");
+                    Log.v(LOG_TAG, body);
 
 
-                    } catch (ClientProtocolException e) {
-                        Log.v(LOG_TAG, "Fatal protocol exception: " + e.getMessage());
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        Log.v(LOG_TAG, "Fatal transport error: " + e.getMessage());
-                    }
-
+                } catch (ClientProtocolException e) {
+                    Log.v(LOG_TAG, "Fatal protocol exception: " + e.getMessage());
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    Log.v(LOG_TAG, "Fatal transport error: " + e.getMessage());
                 }
 
             }

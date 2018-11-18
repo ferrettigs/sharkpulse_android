@@ -32,7 +32,6 @@ public class    ReceiptActivity extends FragmentActivity {
     public static final String KEY_LATITUDE = "KEY_LATITUDE";
     public static final String KEY_LONGITUDE = "KEY_LONGITUDE";
     private static final String LOG_TAG = ReceiptActivity.class.getSimpleName();
-    private ArrayList<String> stringInfo;
     private TextView email;
     private TextView species;
     private TextView latitude;
@@ -41,8 +40,7 @@ public class    ReceiptActivity extends FragmentActivity {
     private ImageView image;
     private Intent intent;
     private Bitmap imgBitmap, resizedBitmap;
-    private double latitudeDouble;
-    private double longitudeDouble;
+    private Record mRecord;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,13 +50,9 @@ public class    ReceiptActivity extends FragmentActivity {
         intent = getIntent();
         mButton = (Button) findViewById(R.id.coordinateButton);
         mContext = ReceiptActivity.this;
-        stringInfo = new ArrayList<String>(5);
-        stringInfo = intent.getStringArrayListExtra("ArrayRecords");
+        mRecord = AppController.getInstance(this).getRecord();//getParcelableExtra(AppController.KEY_RECORD);
 
-        latitudeDouble = Double.parseDouble(stringInfo.get(2));
-        longitudeDouble = Double.parseDouble(stringInfo.get(3));
-
-        imgBitmap = BitmapFactory.decodeFile(stringInfo.get(5));
+        imgBitmap = mRecord.mBitmap;
         resizedBitmap = Bitmap.createScaledBitmap(imgBitmap, (int) (imgBitmap.getWidth() * 0.1), (int) (imgBitmap.getHeight() * 0.1), true);
 
         setUpMapIfNeeded();
@@ -71,7 +65,8 @@ public class    ReceiptActivity extends FragmentActivity {
                         @Override
                         public void onMapReady(GoogleMap googleMap) {
 
-                            if (mMap != null) {
+                            if (googleMap != null) {
+                                mMap = googleMap;
                                 setUpMap();
                             }
                         }
@@ -100,16 +95,16 @@ public class    ReceiptActivity extends FragmentActivity {
                 notes = (TextView) v.findViewById(R.id.notes_textview);
                 image = (ImageView) v.findViewById(R.id.imageView);
 
-                email.setText(stringInfo.get(0));
+                email.setText(mRecord.mEmail);
 
                 // edge cases of no info given on form
-                if (!stringInfo.get(1).equals("")){
-                    species.setText(stringInfo.get(1));
+                if (!mRecord.mGuessSpecies.equals("")){
+                    species.setText(mRecord.mGuessSpecies);
                 }
-                latitude.setText(stringInfo.get(2));
-                longitude.setText(stringInfo.get(3));
-                if (!stringInfo.get(4).equals("")) {
-                    notes.setText(stringInfo.get(4));
+                latitude.setText(Double.toString(mRecord.mLatitude));
+                longitude.setText(Double.toString(mRecord.mLongitude));
+                if (!mRecord.mNotes.equals("")) {
+                    notes.setText(mRecord.mNotes);
                 }
                 image.setImageBitmap(resizedBitmap);
 
@@ -120,7 +115,7 @@ public class    ReceiptActivity extends FragmentActivity {
 
         mMap.getUiSettings().setScrollGesturesEnabled(false);
 
-        position = mMap.addMarker(new MarkerOptions().position(new LatLng(latitudeDouble, longitudeDouble)));
+        position = mMap.addMarker(new MarkerOptions().position(new LatLng(mRecord.mLatitude, mRecord.mLongitude)));
 
         position.showInfoWindow();
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(position.getPosition(), 7));

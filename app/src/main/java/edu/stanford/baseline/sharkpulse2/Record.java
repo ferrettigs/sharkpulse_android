@@ -1,5 +1,9 @@
 package edu.stanford.baseline.sharkpulse2;
 
+import android.graphics.Bitmap;
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.Date;
 
 /**
@@ -7,7 +11,7 @@ import java.util.Date;
  */
 
 
-public class Record {
+public class Record implements Parcelable {
     protected String mEmail;
     protected String mGuessSpecies;
     protected String mNotes;
@@ -15,7 +19,7 @@ public class Record {
     protected double mLongitude;
     protected Date mDate;
     protected String mTime;
-    protected String mImagePath;
+    protected Bitmap mBitmap;
 
     public Record() {
 
@@ -25,6 +29,29 @@ public class Record {
         this.mGuessSpecies = mGuessSpecies;
         this.mNotes = mNotes;
     }
+
+    protected Record(Parcel in) {
+        mEmail = in.readString();
+        mGuessSpecies = in.readString();
+        mNotes = in.readString();
+        mLatitude = in.readDouble();
+        mLongitude = in.readDouble();
+        mDate = (Date) in.readSerializable();
+        mTime = in.readString();
+        mBitmap = in.readParcelable(Bitmap.class.getClassLoader());
+    }
+
+    public static final Creator<Record> CREATOR = new Creator<Record>() {
+        @Override
+        public Record createFromParcel(Parcel in) {
+            return new Record(in);
+        }
+
+        @Override
+        public Record[] newArray(int size) {
+            return new Record[size];
+        }
+    };
 
     public Record setCoordinates (double latitude, double longitude) {
         mLatitude = latitude;
@@ -42,9 +69,26 @@ public class Record {
         return this;
     }
 
-    public Record setImage(String imagePath) {
-        mImagePath = imagePath;
+    public Record setImage(Bitmap bitmap) {
+        mBitmap = bitmap;
 
         return this;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(mEmail);
+        dest.writeString(mGuessSpecies);
+        dest.writeString(mNotes);
+        dest.writeDouble(mLatitude);
+        dest.writeDouble(mLongitude);
+        dest.writeSerializable(mDate);
+        dest.writeString(mTime);
+        dest.writeParcelable(mBitmap, 0);
     }
 }

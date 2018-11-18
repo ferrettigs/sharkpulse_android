@@ -11,6 +11,7 @@ android {
         versionCode 4
         versionName "4.0"
         multiDexEnabled true
+        useLibrary 'org.apache.http.legacy'
     }
 
     buildTypes {

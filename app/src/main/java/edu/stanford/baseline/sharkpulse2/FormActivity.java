@@ -3,6 +3,7 @@ package edu.stanford.baseline.sharkpulse2;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ExifInterface;
@@ -19,7 +20,6 @@ public class FormActivity extends Activity {
     private ImageView mImageView;
     private EditText mEmailEditText;
     protected Context mContext;
-    private String mImagePath;
     private Double mLatitude;
     private Double mLongitude;
     private String mEmail;
@@ -42,21 +42,21 @@ public class FormActivity extends Activity {
         mEmailEditText = (EditText)findViewById(R.id.email_field);
         mController = AppController.getInstance(mContext);
         mRecord = mController.getRecord();
+//        mRecord.mBitmap = getIntent().getParcelableExtra(StartActivity.KEY_BITMAP);
         mLatitude = mRecord.mLatitude;
         mLongitude = mRecord.mLongitude;
-        mEmailEditText.setText(Utility.getPlayStoreEmail(mContext));
-        if(!Utility.getPlayStoreEmail(mContext).equals(""))
+        String playStoreEmail = Utility.getPlayStoreEmail(mContext);
+        if (playStoreEmail != null) {
+            mEmailEditText.setText(playStoreEmail);
             mEmailEditText.setKeyListener(null);
-
-        File imgFile = new File(getIntent().getExtras().getString(StartActivity.KEY_IMAGE_PATH));
-
-        if(imgFile.exists()){
-            Bitmap imgBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-            Bitmap resizedBitmap = Bitmap.createScaledBitmap(imgBitmap, (int) (imgBitmap.getWidth() * 0.8), (int) (imgBitmap.getHeight() * 0.8), true);
-            mImageView.setImageBitmap(resizedBitmap);
         }
 
-        mImagePath = getIntent().getExtras().getString(StartActivity.KEY_IMAGE_PATH);
+        Bitmap bitmap = AppController.getInstance(this).getBitmap();//getIntent().getParcelableExtra(StartActivity.KEY_BITMAP);
+
+        if(bitmap != null) {
+            Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth() * 0.8), (int) (bitmap.getHeight() * 0.8), true);
+            mImageView.setImageBitmap(resizedBitmap);
+        }
 
         if (!getIntent().getExtras().getBoolean(StartActivity.KEY_IS_GALLERY)) {
             if (!mController.is_GPS_on) {
@@ -64,21 +64,21 @@ public class FormActivity extends Activity {
                 Utility.showAlertDialog("GPS is not enabled. Do you want to go to settings menu?", "Settings", "Cancel", mContext, intent);
 
                 ////this helps reset the value of is_GPS_on
-                mController.startGPS();
+                mController.startGPS(this);
 
                 if (mController.is_GPS_on) {
-                    mController.startGPS();
+                    mController.startGPS(this);
                 }
             }
             else{
-                mController.startGPS();
+                mController.startGPS(this);
             }
         }
         else
         {
             ExifInterface exif;
             try {
-                exif = new ExifInterface(getIntent().getExtras().getString(StartActivity.KEY_IMAGE_PATH));
+                exif = new ExifInterface("");
                 if(exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE) != null && exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF) != null &&
                    exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE) != null && exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF) != null) {
                     mLatitude = Utility.convertToDegree(exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE), exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF));
@@ -90,6 +90,15 @@ public class FormActivity extends Activity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            mController.startGPS(this);
         }
     }
 
@@ -114,7 +123,7 @@ public class FormActivity extends Activity {
             }
             // else, we have all the data we need and we can send the record
             else{
-                mController.setData(mGuessSpecies, mEmail, mNotes, mImagePath, mRecord.mLongitude, mRecord.mLatitude);
+                mController.setData(mGuessSpecies, mEmail, mNotes, mRecord.mBitmap, mRecord.mLongitude, mRecord.mLatitude);
                 mController.sendData();
             }
         }
@@ -125,7 +134,7 @@ public class FormActivity extends Activity {
             if(resultCode == RESULT_OK){
                 mLatitude = Double.parseDouble(data.getExtras().getString(KEY_LATITUDE));
                 mLongitude = Double.parseDouble(data.getExtras().getString(KEY_LONGITUDE));
-                mController.setData(mGuessSpecies, mEmail, mNotes, mImagePath, mLongitude, mLatitude);
+                mController.setData(mGuessSpecies, mEmail, mNotes, mRecord.mBitmap, mLongitude, mLatitude);
                mController.sendData();
             }
         }
