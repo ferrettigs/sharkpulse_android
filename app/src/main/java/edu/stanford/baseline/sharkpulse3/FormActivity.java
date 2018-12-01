@@ -1,18 +1,17 @@
-package edu.stanford.baseline.sharkpulse2;
+package edu.stanford.baseline.sharkpulse3;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.media.ExifInterface;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import java.io.File;
+
 import java.io.IOException;
 
 public class FormActivity extends Activity {

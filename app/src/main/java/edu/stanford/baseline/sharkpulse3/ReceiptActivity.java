@@ -1,9 +1,8 @@
-package edu.stanford.baseline.sharkpulse2;
+package edu.stanford.baseline.sharkpulse3;
 
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
@@ -20,7 +19,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import java.util.ArrayList;
+
 /**
  * Created by Brian De Anda and Daniel Diaz on 12/5/14.
  */

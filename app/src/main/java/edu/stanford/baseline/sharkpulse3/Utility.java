@@ -1,4 +1,4 @@
-package edu.stanford.baseline.sharkpulse2;
+package edu.stanford.baseline.sharkpulse3;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
