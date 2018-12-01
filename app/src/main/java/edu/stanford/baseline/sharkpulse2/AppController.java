@@ -261,7 +261,7 @@ public class AppController {
                     ByteArrayOutputStream bos = new ByteArrayOutputStream();
                     record.mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
                     byte [] data = bos.toByteArray();
-                    multipartEntityBuilder.addPart("uplod_img", new ByteArrayBody(data,"image/jpeg", "test2.jpg"));
+                    multipartEntityBuilder.addPart(PHOTOGRAPH, new ByteArrayBody(data,"image/jpeg", "test2.jpg"));
 
                     // place record in json
                     multipartEntityBuilder.addTextBody(DATE, String.valueOf(record.mDate));
